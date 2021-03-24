@@ -16,7 +16,7 @@ const useStyles = theme => ({
     bubbleContainer: {
         width: "100%",
         display: "flex",
-        maxHeight: "80%"
+        maxHeight: "80%",
     },
     bubble: {
         border: "0.5px solid black",
@@ -26,12 +26,13 @@ const useStyles = theme => ({
         display: "inline-block"
     },
     leftMsg: {
-        borderRadius: "10px",
+        borderRadius: "15px",
         background: "#3461eb",
         padding: "10px",
         display: "inline-block",
         color: "white",
         maxWidth: "40%",
+        bottom: "5"
     },
     rightMsg: {
         borderRadius: "10px",
@@ -43,17 +44,26 @@ const useStyles = theme => ({
     },
     textField: {
         width: "80%",
-        height: "10%",
-        padding: "2.5%"
+        color: "white"
     },
     button: {
-        width: "10%",
-        height: "10%",
-        padding: "2.5%"
+        top: "20px",
+        width: "10%"
     },
     input: {
         color: "white",
         borderColor: "white"
+    },
+    msgInput: {
+        borderTop: "1px solid",
+        textAlign: "center",
+        padding: "20px",
+        position: "fixed",
+        left: "0",
+        bottom: "0",
+        height: "60px",
+        width: "100%",
+        background: "#121212"
     }
 });
 
@@ -106,7 +116,7 @@ class MessageBox extends React.Component {
                 <div className={classes.container}>
                     {chatBubbles}
                 </div>
-                <div style={{background: "#121212"}}>
+                <div className={classes.msgInput}>
                     <TextField 
                         variant="outlined"
                         margin="normal"
@@ -114,6 +124,7 @@ class MessageBox extends React.Component {
                         label="Enter message"
                         name="message"
                         autoFocus
+                        multiline
                         className={classes.textField}
                         InputProps={{
                             className: classes.input
