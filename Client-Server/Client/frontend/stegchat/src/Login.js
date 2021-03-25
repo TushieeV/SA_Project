@@ -87,6 +87,7 @@ class Login extends React.Component {
                     backPressed={this.resetBools}
                     setUsername={this.props.setUsername}
                     setTok={this.props.setTok}
+                    setDh={this.props.setDh}
                 />
             );
         }

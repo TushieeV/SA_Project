@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { get_dh } from './dh';
 
 const fs = require('electron').remote.require('fs');
 
@@ -100,6 +101,11 @@ class LoginForm extends React.Component {
                     .then(response => response.json())
                     .then(data => {
                         this.props.setTok(data.token);
+                    });
+                fetch(`http://127.0.0.1:6001/get-dh`)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.props.setDh(data)
                     });
             } else {
                 this.setState({msg: "Incorrect username or password", msgColor: "red"});

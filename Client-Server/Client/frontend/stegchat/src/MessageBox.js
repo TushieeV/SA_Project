@@ -88,12 +88,12 @@ class MessageBox extends React.Component {
     }
     sendMessage(e) {
         e.preventDefault();
-        var newMsgs = [...this.state.dummyData];
+        var newMsgs = [...this.state.messages];
         newMsgs.push({
             message: this.state.message,
             direction: "left"
         });
-        this.setState({dummyData: newMsgs});
+        this.setState({messages: newMsgs});
     }
     handleKeyPress(e) {
         if (e.key === "Enter") {
