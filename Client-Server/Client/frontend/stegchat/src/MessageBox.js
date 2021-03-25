@@ -2,16 +2,16 @@ import React from "react";
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
+import SendSharpIcon from '@material-ui/icons/SendSharp';
 
 const useStyles = theme => ({
     container: {
         //bottom: 0,
         width: "75%",
-        padding: "12.5%",
-        background: "#121212",
-        height: "80%",
-        maxHeight: "80%"
+        height: "92vh",
+        border: "1px solid white"
     },
     bubbleContainer: {
         width: "100%",
@@ -32,7 +32,6 @@ const useStyles = theme => ({
         display: "inline-block",
         color: "white",
         maxWidth: "40%",
-        bottom: "5"
     },
     rightMsg: {
         borderRadius: "10px",
@@ -48,7 +47,6 @@ const useStyles = theme => ({
     },
     button: {
         top: "20px",
-        width: "10%"
     },
     input: {
         color: "white",
@@ -63,7 +61,11 @@ const useStyles = theme => ({
         bottom: "0",
         height: "60px",
         width: "100%",
-        background: "#121212"
+    },
+    flexBox: {
+        display: "flex",
+        flexDirection: "row",
+        flexBasis: "100%"
     }
 });
 
@@ -112,9 +114,14 @@ class MessageBox extends React.Component {
             </div>
         ));
         return (
-            <Container>
-                <div className={classes.container}>
-                    {chatBubbles}
+            <Container maxWidth="100%">
+                <div class={classes.flexBox}>
+                    <div style={{width: "25%", border: "1px solid white"}}>
+
+                    </div>
+                    <div className={classes.container}>
+                        {chatBubbles}
+                    </div>
                 </div>
                 <div className={classes.msgInput}>
                     <TextField 
@@ -131,14 +138,14 @@ class MessageBox extends React.Component {
                         }}
                         onChange={(e) => {this.setState({message: e.target.value})}}
                     />
-                    <Button 
+                    <IconButton 
                         variant="contained"
                         color="primary"
                         className={classes.button}
                         onClick={this.sendMessage}
                     >
-                        S
-                    </Button>
+                        <SendSharpIcon />
+                    </IconButton>
                 </div>
             </Container>
         );

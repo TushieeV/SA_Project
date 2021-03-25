@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Login from './Login';
-import MessageBox from './MessageBox';
+import App from './App'
 import reportWebVitals from './reportWebVitals';
+
+document.body.style = 'background: #121212;'
 
 ReactDOM.render(
   <React.StrictMode>
-    <MessageBox />
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
