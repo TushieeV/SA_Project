@@ -4,8 +4,6 @@ import './index.css';
 import App from './App'
 import reportWebVitals from './reportWebVitals';
 
-document.body.style = 'background: #121212;'
-
 ReactDOM.render(
   <React.StrictMode>
     <App />

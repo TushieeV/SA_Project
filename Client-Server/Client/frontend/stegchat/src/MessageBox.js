@@ -1,10 +1,10 @@
 import React from "react";
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import SendSharpIcon from '@material-ui/icons/SendSharp';
+import { CssBaseline } from "@material-ui/core";
 
 const useStyles = theme => ({
     container: {
@@ -55,16 +55,23 @@ const useStyles = theme => ({
     msgInput: {
         borderTop: "1px solid",
         textAlign: "center",
-        padding: "20px",
-        position: "fixed",
+        padding: "10px",
+        position: "absolute",
         left: "0",
         bottom: "0",
-        height: "60px",
+        right: "0",
+        height: "7%",
+        maxHeight: "20%",
         width: "100%",
     },
-    flexBox: {
+    flexBoxRow: {
         display: "flex",
         flexDirection: "row",
+        flexBasis: "100%"
+    },
+    flexBoxColumn: {
+        display: "flex",
+        flexDirection: "column",
         flexBasis: "100%"
     }
 });
@@ -73,30 +80,14 @@ class MessageBox extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dummyData: [
-                {
-                    message: "1: This should be in left feaf wefawefaewfawefawefawefawef",
-                    direction: "left"
-                },
-                {
-                    message: "2: This should be in right feafewfaw faew awfewa fwaf",
-                    direction: "right"
-                },
-                {
-                    message: "3: This should be in left againf aewfeawfwafaw faw waf awfawf w",
-                    direction: "left"
-                },
-                {
-                    message: "4: This should be in right againf eawfawf wf wf waf afeawfawfwfawf eawfwa",
-                    direction: "right"
-                }
-            ],
-            message: null
+            messages: [],
+            message: ""
         }
         this.render = this.render.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
     }
-    sendMessage() {
+    sendMessage(e) {
+        e.preventDefault();
         var newMsgs = [...this.state.dummyData];
         newMsgs.push({
             message: this.state.message,
@@ -104,9 +95,15 @@ class MessageBox extends React.Component {
         });
         this.setState({dummyData: newMsgs});
     }
+    handleKeyPress(e) {
+        if (e.key === "Enter") {
+            this.sendMessage(e);
+            this.setState({message: ""});
+        }
+    }
     render() {
         const { classes } = this.props;
-        const chatBubbles = this.state.dummyData.map((obj, i = 0) => (
+        const chatBubbles = this.state.messages.map((obj, i = 0) => (
             <div className={`${classes.bubbleContainer} ${obj.direction}`} key={i}>
                 <div key={i++} className={(obj.direction === 'left') ? classes.leftMsg : classes.rightMsg}>
                     {obj.message}
@@ -114,38 +111,43 @@ class MessageBox extends React.Component {
             </div>
         ));
         return (
-            <Container maxWidth="100%">
-                <div class={classes.flexBox}>
-                    <div style={{width: "25%", border: "1px solid white"}}>
+            <Container>
+                <CssBaseline />
+                <div class={classes.flexBoxColumn}>
+                    <div class={classes.flexBoxRow}>
+                        <div style={{width: "25%", border: "1px solid white"}}>
 
+                        </div>
+                        <div className={classes.container}>
+                            {chatBubbles}
+                        </div>
                     </div>
-                    <div className={classes.container}>
-                        {chatBubbles}
+                    <div className={classes.msgInput}>
+                        <TextField 
+                            variant="outlined"
+                            margin="normal"
+                            id="message"
+                            label="Enter message"
+                            name="message"
+                            autoFocus
+                            multiline
+                            value={this.state.message}
+                            className={classes.textField}
+                            InputProps={{
+                                className: classes.input
+                            }}
+                            onChange={(e) => this.setState({message: e.target.value})}
+                            onKeyPress={(e) => this.handleKeyPress(e)}
+                        />
+                        <IconButton 
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            onClick={(e) => this.sendMessage(e)}
+                        >
+                            <SendSharpIcon />
+                        </IconButton>
                     </div>
-                </div>
-                <div className={classes.msgInput}>
-                    <TextField 
-                        variant="outlined"
-                        margin="normal"
-                        id="message"
-                        label="Enter message"
-                        name="message"
-                        autoFocus
-                        multiline
-                        className={classes.textField}
-                        InputProps={{
-                            className: classes.input
-                        }}
-                        onChange={(e) => {this.setState({message: e.target.value})}}
-                    />
-                    <IconButton 
-                        variant="contained"
-                        color="primary"
-                        className={classes.button}
-                        onClick={this.sendMessage}
-                    >
-                        <SendSharpIcon />
-                    </IconButton>
                 </div>
             </Container>
         );

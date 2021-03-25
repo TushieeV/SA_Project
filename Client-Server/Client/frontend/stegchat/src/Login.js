@@ -28,48 +28,14 @@ const useStyles = theme => ({
 class Login extends React.Component {
     constructor(props) {
         super(props);
-        var credentials;
-        try {
-            credentials = JSON.parse(fs.readFileSync('credentials.json', 'utf8'));
-        } catch(e) {
-            console.log(e);
-        }
         this.state = {
-            username: null,
-            password: null,
-            creds: credentials.logins,
             signUp: false,
             signIn: false
         }
-        console.log(this.state.creds);
-        this.logPress = this.logPress.bind(this);
         this.render = this.render.bind(this);
         this.toggleSignIn = this.toggleSignIn.bind(this);
         this.toggleSignUp = this.toggleSignUp.bind(this);
-        this.fieldChange = this.fieldChange.bind(this);
         this.resetBools = this.resetBools.bind(this);
-    }
-    logPress(e){
-        e.preventDefault();
-        if (this.state.username && this.state.password) {
-            var user = {
-                username: this.state.username,
-                password: this.state.password
-            }
-
-            var newCreds = [...this.state.creds];
-            newCreds.push(user);
-            this.setState({creds: newCreds});
-            const update = {
-                logins: newCreds
-            }
-            try {
-                fs.writeFileSync('credentials.json', JSON.stringify(update), 'utf-8');
-            } catch(e) {
-                console.log(e);
-            }
-            this.setState({loggedIn: true});
-        }
     }
     toggleSignUp() {
         const newState = !this.state.signUp;
@@ -78,13 +44,6 @@ class Login extends React.Component {
     toggleSignIn() {
         const newState = !this.state.signIn;
         this.setState({signIn: newState});
-    }
-    fieldChange(value, field) {
-        if (field === 'username') {
-            this.setState({username: value});
-        } else {
-            this.setState({password: value});
-        }
     }
     resetBools() {
         this.setState({
@@ -125,10 +84,9 @@ class Login extends React.Component {
             return (
                 <LoginForm
                     prompt={prompt}
-                    logPress={this.logPress}
-                    usernameChange={(value) => this.fieldChange(value, 'username')}
-                    passwordChange={(value) => this.fieldChange(value, 'password')}
                     backPressed={this.resetBools}
+                    setUsername={this.props.setUsername}
+                    setTok={this.props.setTok}
                 />
             );
         }
