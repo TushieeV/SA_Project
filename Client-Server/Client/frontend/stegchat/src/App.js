@@ -4,6 +4,8 @@ import Main from './Main';
 import './App.css';
 import {Helmet} from 'react-helmet';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import StegDialog from './StegDialog';
+import Mic from './Mic';
 
 class App extends React.Component {
   constructor(props) {

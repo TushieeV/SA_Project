@@ -14,11 +14,13 @@
     "electron": "^12.0.1",
     "electron-builder": "^22.10.5",
     "electron-is-dev": "^2.0.0",
+    "image-to-base64": "^2.1.1",
     "keytar": "^7.5.0",
     "python-shell": "^2.0.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",
+    "react-mic": "^12.4.6",
     "react-scripts": "4.0.3",
     "wait-on": "^5.3.0",
     "web-vitals": "^1.0.1"
@@ -55,5 +57,6 @@
   },
   "postinstall": "electron-builder install-app-deps",
   "preelectron-pack": "npm build",
-  "electron-pack": "build -mw"
+  "electron-pack": "build -mw",
+  "proxy": "https://cors-anywhere.herokuapp.com/"
 }

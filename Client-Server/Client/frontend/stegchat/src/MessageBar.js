@@ -3,6 +3,9 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import SendSharpIcon from '@material-ui/icons/SendSharp';
+import ImageIcon from '@material-ui/icons/Image';
+import LockIcon from '@material-ui/icons/Lock';
+import StegDialog from "./StegDialog";
 
 const useStyles = theme => ({
     textField: {
@@ -34,10 +37,12 @@ class MessageBar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            message: ""
+            message: "",
+            open: false
         };
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.render = this.render.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
     handleKeyPress(e) {
         if (e.key === "Enter") {
@@ -48,10 +53,17 @@ class MessageBar extends React.Component {
         this.props.sendMessage(e, this.state.message);
         this.setState({message: ""});
     }
+    handleClose() {
+        this.setState({open: false});
+    }
     render() {
         const { classes } = this.props;
         return (
             <div className={classes.msgInput}>
+                <StegDialog 
+                    handleClose={this.handleClose}
+                    open={this.state.open}    
+                />
                 <TextField 
                     variant="outlined"
                     margin="normal"
@@ -75,6 +87,21 @@ class MessageBar extends React.Component {
                     onClick={(e) => this.sendMsg(e)}
                 >
                     <SendSharpIcon />
+                </IconButton>
+                <IconButton
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                >
+                    <ImageIcon />
+                </IconButton>
+                <IconButton
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    onClick={(e) => {this.setState({open: true})}}
+                >
+                    <LockIcon />
                 </IconButton>
             </div>
         );
