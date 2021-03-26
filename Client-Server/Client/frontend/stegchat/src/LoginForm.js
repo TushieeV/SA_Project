@@ -6,9 +6,8 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { get_dh } from './dh';
 
-const fs = require('electron').remote.require('fs');
+const keytar = require('electron').remote.require('keytar');
 
 const useStyles = theme => ({
     paper: {
@@ -22,7 +21,7 @@ const useStyles = theme => ({
         backgroundColor: theme.palette.secondary.main,
     },
     form: {
-        width: '100%', // Fix IE 11 issue.
+        width: '100%',
         marginTop: theme.spacing(1),
     },
     submit: {
@@ -33,22 +32,40 @@ const useStyles = theme => ({
 class LoginForm extends React.Component {
     constructor(props) {
         super(props);
-        var credentials;
-        try {
-            credentials = JSON.parse(fs.readFileSync('credentials.json', 'utf8'));
-        } catch(e) {
-            console.log(e);
-        }
         this.state = {
             username: null,
             password: null,
-            creds: credentials.logins,
+            creds: null,
+            tokens: null,
             msg: null,
             msgColor: "red",
         }
+        keytar.findCredentials('stegchat')
+            .then(result => {
+                this.state.creds = result;
+            });
+        keytar.findCredentials('stegchat-tokens')
+            .then(result => {
+                this.state.tokens = result;
+            })
         this.fieldChange = this.fieldChange.bind(this);
         this.render = this.render.bind(this);
         this.logPress = this.logPress.bind(this);
+        this.updateCreds = this.updateCreds.bind(this);
+    }
+    updateCreds(user) {
+        keytar.setPassword('stegchat', user.username, user.password);
+        keytar.findCredentials('stegchat')
+            .then(result => {
+                this.setState({creds: result});
+            });
+    }
+    updateTokens(user, token) {
+        keytar.setPassword('stegchat-tokens', user, token);
+        keytar.findCredentials('stegchat-tokens')
+            .then(result => {
+                this.setState({tokens: result});
+            })
     }
     fieldChange(value, field) {
         if (field === 'username') {
@@ -75,32 +92,40 @@ class LoginForm extends React.Component {
             password: this.state.password,
         }
         if (this.props.prompt === 'Sign Up') {
-            const found = this.state.creds.some(el => el.username === user.username);
+            const found = this.state.creds.some(el => el.account === user.username);
             if (!found) {
-                var newCreds = [...this.state.creds];
-                newCreds.push(user);
-                this.setState({creds: newCreds});
-                const update = {
-                    logins: newCreds
-                }
-                try {
-                    fs.writeFileSync('credentials.json', JSON.stringify(update), 'utf-8');
-                    this.setState({msg: "Registration successful!", msgColor: "green"})
-                } catch(e) {
-                    this.setState({msg: "Internal error, please try again", msgColor: "red"})
-                    console.log(e);
-                }
+                this.updateCreds(user);
+                this.setState({msg: "Registration successful!", msgColor: "green"});
             } else {
                 this.setState({msg: "Username already taken", msgColor: "red"});
             }
         } else {
-            const found = this.state.creds.some(el => (el.username === user.username && el.password === user.password));
-            if (found) {
+            const foundAccount = this.state.creds.some(el => (el.account === user.username && el.password === user.password));
+            const foundToken = this.state.tokens.some(el => el.account === user.username);
+            if (foundAccount && !foundToken) {
                 this.props.setUsername(user.username);
                 fetch(`http://127.0.0.1:5000/get-token?username=${user.username}`)
                     .then(response => response.json())
                     .then(data => {
+                        this.updateTokens(this.state.username, data.token);
                         this.props.setTok(data.token);
+                    });
+                fetch(`http://127.0.0.1:6001/get-dh`)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.props.setDh(data)
+                    });
+            } else if (foundAccount && foundToken) {
+                this.props.setUsername(user.username);
+                keytar.getPassword('stegchat-tokens', user.username)
+                    .then(result => {
+                        fetch(`http://127.0.0.1:5000/get-token?username=${user.username}&token=${result}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.updateTokens(this.state.username, data.token);
+                            this.props.setTok(data.token);
+                            console.log(data);
+                        });
                     });
                 fetch(`http://127.0.0.1:6001/get-dh`)
                     .then(response => response.json())

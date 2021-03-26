@@ -1,6 +1,6 @@
 import React from 'react';
 import Login from './Login';
-import MessageBox from './MessageBox';
+import Main from './Main';
 import './App.css';
 import {Helmet} from 'react-helmet';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -17,7 +17,7 @@ class App extends React.Component {
       username: null,
       token: null,
       dh: null,
-      pkeyPosted: false
+      pkeyPosted: false,
     };
     this.render = this.render.bind(this);
     this.setToken = this.setToken.bind(this);
@@ -38,8 +38,10 @@ class App extends React.Component {
       fetch(`http://127.0.0.1:5000/my-pkey?token=${this.state.token}&pkey=${this.state.dh.public_key}`, {method: 'post'})
       .then(response => response.json())
       .then(data => {
-        console.log(data)
-        this.setState({pkeyPosted: true})
+        console.log(data);
+        if (data.Success) {
+          this.setState({pkeyPosted: true});
+        }
       });
     }
   }
@@ -66,7 +68,7 @@ class App extends React.Component {
             <Helmet>
               <style>{'body {background-color: #121212; }'}</style>
             </Helmet>
-            <MessageBox />
+            <Main />
           </ThemeProvider>
         </div>
       );

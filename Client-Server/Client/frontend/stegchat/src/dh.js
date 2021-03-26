@@ -1,5 +1,3 @@
-const { PythonShell } = require('python-shell');
-const fs = require('fs');
 const execFile = require('child_process').execFile;
 /*async function gen_dh_obj() {
     var res = await new Promise((resolve, reject) => {

@@ -5,8 +5,6 @@ import Container from '@material-ui/core/Container';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-const fs = require('electron').remote.require('fs');
-
 const useStyles = theme => ({
     paper: {
         marginTop: theme.spacing(8),
