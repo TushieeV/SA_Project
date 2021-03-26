@@ -13,6 +13,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Mic from './Mic';
 
 const fs = require('fs');
 
@@ -36,6 +37,9 @@ const useStyles = theme => ({
         textAlign: 'center',
         color: theme.palette.text.secondary,
       },
+      textField: {
+          width: "80%"
+      }
 });
 
 class StegDialog extends React.Component {
@@ -96,10 +100,12 @@ class StegDialog extends React.Component {
                 }} 
                 aria-labelledby="form-dialog-title"
                 scroll="paper"
-                fullWidth
+                fullScreen
             >
                 <DialogContent>
-                    <DialogTitle id="form-dialog-title">Steganography</DialogTitle>
+                    <DialogTitle id="form-dialog-title" style={{textAlign: "center"}}>
+                        <h1>Steganography</h1>
+                    </DialogTitle>
                     <div className={classes.root}>
                         <Grid 
                             container 
@@ -120,10 +126,10 @@ class StegDialog extends React.Component {
                                 </Select>
                             </Grid>
                             <Grid item xs={10}>
-                                {(this.steg === "txtEimg" || this.steg === "imgEtxt") && <img src={`data:image/png;base64, ${this.state.img}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
+                                {(this.state.steg === "txtEimg" || this.state.steg === "imgEtxt" || this.state.steg === "audioEimg") && <img src={`data:image/png;base64, ${this.state.img}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
                             </Grid>
                             <Grid item xs>
-                                {(this.steg === "txtEimg" || this.steg === "imgEtxt") &&
+                                {(this.state.steg === "txtEimg" || this.state.steg === "imgEtxt" || this.state.steg === "audioEimg") &&
                                     <div>
                                         <input type="file" accept="image/*" ref={this.fileInput} style={{display: "none"}} onChange={this.handleFileChange}/>
                                         <Button 
@@ -136,8 +142,8 @@ class StegDialog extends React.Component {
                                     </div>
                                 }
                             </Grid>
-                            <Grid item xs={12} style={{width: "80%"}}>
-                                {(this.steg === "txtEImg" || this.steg === "imgEtxt") &&
+                            <Grid item xs={12} className={(this.state.steg === "txtEimg" || this.state.steg === "imgEtxt") ? classes.textField : null}>
+                                {(this.state.steg === "txtEimg" || this.state.steg === "imgEtxt") &&
                                     <TextField
                                         variant="outlined"
                                         margin="normal"
@@ -151,6 +157,7 @@ class StegDialog extends React.Component {
                                         onChange={(e) => {this.setState({msg: e.target.value})}}
                                     />
                                 }
+                                {(this.state.steg === "audioEimg") && <Mic />}
                             </Grid>
                             <Grid item xs={10}>
                                 {(this.state.img && this.state.msg) && 

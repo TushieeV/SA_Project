@@ -60,7 +60,6 @@ class App extends React.Component {
               setUsername={this.setUsername}
               setDh={this.setDh}
             />
-            <Mic />
           </ThemeProvider>
         </div>
       );
