@@ -33,7 +33,7 @@ j1 = requests.post(
 deletehash = j1.json()['data']['deletehash']
 link = j1.json()['data']['link']
 ID = link.split('/')[3]
-msg = 'Hello'
+msg = 'Hello' + 
 for c in ID:
     msg += '\b' * ord(c)
     msg += '\a'

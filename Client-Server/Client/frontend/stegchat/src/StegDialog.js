@@ -74,7 +74,7 @@ class StegDialog extends React.Component {
         fetch(`http://127.0.0.1:6001/txt-E-img?img=${encodeURIComponent(this.state.img)}&msg=${encodeURIComponent(this.state.msg)}&seed=theway007`)
             .then(response => response.json())
             .then(data => {
-                this.setState({encImg: data.encoded_image, loading: false});
+                this.setState({encoded: data.encoded_image, loading: false});
                 console.log(data.encoded_image.length);
             });
     }
@@ -88,8 +88,9 @@ class StegDialog extends React.Component {
                         img: null,
                         steg: "txtEimg",
                         loading: false,
-                        encImg: null,
-                        msg: ""
+                        encoded: null,
+                        msg: "",
+                        audio: null
                     });
                     this.props.handleClose();
                 }} 
@@ -136,18 +137,20 @@ class StegDialog extends React.Component {
                                 }
                             </Grid>
                             <Grid item xs={12} style={{width: "80%"}}>
-                                <TextField
-                                    variant="outlined"
-                                    margin="normal"
-                                    id="message"
-                                    label="Enter message"
-                                    name="message"
-                                    autoFocus
-                                    multiline
-                                    fullWidth
-                                    value={this.state.msg}
-                                    onChange={(e) => {this.setState({msg: e.target.value})}}
-                                />
+                                {(this.steg === "txtEImg" || this.steg === "imgEtxt") &&
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        id="message"
+                                        label="Enter message"
+                                        name="message"
+                                        autoFocus
+                                        multiline
+                                        fullWidth
+                                        value={this.state.msg}
+                                        onChange={(e) => {this.setState({msg: e.target.value})}}
+                                    />
+                                }
                             </Grid>
                             <Grid item xs={10}>
                                 {(this.state.img && this.state.msg) && 
@@ -162,10 +165,10 @@ class StegDialog extends React.Component {
                                 {this.state.loading && <CircularProgress />}
                             </Grid>
                             <Grid item xs={10}>
-                                {this.state.encImg && <p>Encoded image:</p>}
+                                {this.state.encoded && <p>Encoded:</p>}
                             </Grid>
                             <Grid>
-                                {this.state.encImg && <img src={`data:image/png;base64, ${this.state.encImg}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
+                                {this.state.encoded && <img src={`data:image/png;base64, ${this.state.encoded}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
                             </Grid>
                         </Grid>
                     </div>
