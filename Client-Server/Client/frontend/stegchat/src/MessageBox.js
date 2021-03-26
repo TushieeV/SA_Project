@@ -4,8 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 const useStyles = theme => ({
     container: {
         width: "75%",
-        height: "92vh",
-        border: "1px solid white"
+        height: "87vh",
+        border: "1px solid white",
+        marginTop: "8px"
     },
     bubbleContainer: {
         width: "100%",

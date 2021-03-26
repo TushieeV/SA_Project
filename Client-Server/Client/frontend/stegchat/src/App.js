@@ -6,6 +6,7 @@ import {Helmet} from 'react-helmet';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import StegDialog from './StegDialog';
 import Mic from './Mic';
+import AppBar from './AppBar'
 
 class App extends React.Component {
   constructor(props) {
@@ -70,6 +71,7 @@ class App extends React.Component {
             <Helmet>
               <style>{'body {background-color: #121212; }'}</style>
             </Helmet>
+            <AppBar />
             <Main />
           </ThemeProvider>
         </div>

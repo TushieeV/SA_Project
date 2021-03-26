@@ -68,7 +68,9 @@ class StegDialog extends React.Component {
         document.querySelector("input[type='file']").click();
     }
     handleFileChange(e) {
-        this.getB64Img(e.target.files[0].path);
+        if (e.target.files[0]) {
+            this.getB64Img(e.target.files[0].path);
+        }
     }
     handleSelectChange(e) {
         this.setState({steg: e.target.value});
