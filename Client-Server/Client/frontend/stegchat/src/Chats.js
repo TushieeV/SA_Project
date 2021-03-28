@@ -36,6 +36,9 @@ class Chats extends React.Component {
     constructor(props) {
         super(props);
     }
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps);
+    }
     render() {
         const { classes } = this.props;
         return (
