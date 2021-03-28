@@ -136,7 +136,7 @@ def store_my_pkey():
 def get_chat_requests():
     token = request.args.get('token')
     sql = '''
-        SELECT Requests.req_id, User_Tokens.username
+        SELECT Requests.req_id, User_Tokens.username, Requests.granted
         FROM Requests
         LEFT OUTER JOIN User_Tokens
         ON (Requests.requesting = ? AND User_Tokens.token = Requests.requestor)
@@ -145,8 +145,9 @@ def get_chat_requests():
     if len(res) > 0:
         reqs = []
         for r in res:
-            req_id, requestor = r
-            reqs.append({'req_id': req_id, 'requestor': requestor})
+            req_id, requestor, granted = r
+            if granted == 0:
+                reqs.append({'req_id': req_id, 'requestor': requestor})
         return jsonify({'requests': reqs})
     else:
         return jsonify({"Message": "No chat requests so far."})

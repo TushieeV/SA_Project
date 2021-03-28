@@ -87,6 +87,7 @@ class RequestsReceived extends React.Component {
         fetch(`http://1.40.77.213:5000/accept-request?req_id=${obj.req_id}&token=${this.props.token}`, {method: "POST"})
             .then(res => res.json())
             .then(data => {
+                console.log(data);
                 if (data.ses_id) {
                     this.props.addSession(obj.username, data.ses_id);
                     var newMyReqs = [...this.state.myReqs];

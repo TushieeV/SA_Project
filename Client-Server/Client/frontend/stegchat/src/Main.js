@@ -108,7 +108,8 @@ class Main extends React.Component {
                             username={this.props.username}
                             token={this.props.token}
                             addSession={this.addSession} 
-                            sessions={this.state.sessions}   
+                            sessions={this.state.sessions}
+                            setCurr={this.setCurr}   
                         />
                         <MessageBox messages={this.state.messages} />
                     </div>

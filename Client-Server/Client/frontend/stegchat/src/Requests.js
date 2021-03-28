@@ -30,7 +30,10 @@ class Requests extends React.Component {
                     token={this.props.token}
                     addSession={this.props.addSession}
                 />
-                <Chats  sessions={this.props.sessions}/>
+                <Chats 
+                    sessions={this.props.sessions}
+                    setCurr={this.props.setCurr}    
+                />
             </Container>
         );
     }
