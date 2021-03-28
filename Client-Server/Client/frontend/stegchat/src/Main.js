@@ -53,6 +53,9 @@ class Main extends React.Component {
         }
     }
     updateMessages() {
+        if (this.state.sessions.length > 0) {
+            console.log(this.state.sessions);
+        }
         this.state.sessions.map((obj) => {
             fetch(`http://1.40.77.213:5000/get-messages?ses_id=${obj.ses_id}`)
                 .then(res => res.json())
