@@ -53,7 +53,12 @@ class Chats extends React.Component {
                     <li>
                         <ul>
                             {this.props.sessions.map((obj, i = 0) => {
-                                <ListItem className={classes.listUser} key={i}>
+                                <ListItem 
+                                    button 
+                                    className={classes.listUser} 
+                                    key={i}
+                                    onClick={(e) => {this.props.setCurr(obj.ses_id, obj.username)}}
+                                >
                                     <ListItemIcon>
                                         <AccountCircle />
                                     </ListItemIcon>
