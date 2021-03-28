@@ -42,10 +42,10 @@ class Chats extends React.Component {
             <Card className={classes.root}>
                 <List
                     component="nav"
-                    aria-labelledby="list-subheader"
+                    aria-labelledby="chat-list-subheader"
                     className={classes.list}
                     subheader={
-                        <ListSubheader component="div" id="list-subheader" style={{backgroundColor: "#303030"}}>
+                        <ListSubheader component="div" id="chat-list-subheader" style={{backgroundColor: "#303030"}}>
                             Chats:
                         </ListSubheader>
                     }
@@ -56,8 +56,8 @@ class Chats extends React.Component {
                                 <ListItem 
                                     button 
                                     className={classes.listUser} 
-                                    key={i}
-                                    onClick={(e) => {this.props.setCurr(obj.ses_id, obj.username)}}
+                                    key={`chat${i}`}
+                                    onClick={(e) => {this.props.setCurr(obj.username, obj.ses_id)}}
                                 >
                                     <ListItemIcon>
                                         <AccountCircle />
