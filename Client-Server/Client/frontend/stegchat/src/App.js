@@ -4,8 +4,6 @@ import Main from './Main';
 import './App.css';
 import {Helmet} from 'react-helmet';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import StegDialog from './StegDialog';
-import Mic from './Mic';
 import AppBar from './AppBar'
 
 class App extends React.Component {
@@ -26,6 +24,7 @@ class App extends React.Component {
     this.setToken = this.setToken.bind(this);
     this.setUsername = this.setUsername.bind(this);
     this.setDh = this.setDh.bind(this);
+    this.signOut = this.signOut.bind(this);
   }
   setToken(val) {
     this.setState({token: val});
@@ -36,9 +35,17 @@ class App extends React.Component {
   setDh(val) {
     this.setState({dh: val});
   }
+  signOut() {
+    this.setState({
+      username: null,
+      token: null,
+      pkeyPosted: false,
+      dh: null
+    });
+  }
   componentDidUpdate() {
     if (!this.state.pkeyPosted && this.state.dh) {
-      fetch(`http://127.0.0.1:5000/my-pkey?token=${this.state.token}&pkey=${this.state.dh.public_key}`, {method: 'post'})
+      fetch(`http://1.40.77.213:5000/my-pkey?token=${this.state.token}&pkey=${this.state.dh.public_key}`, {method: 'post'})
       .then(response => response.json())
       .then(data => {
         console.log(data);
@@ -54,7 +61,7 @@ class App extends React.Component {
         <div className="application">
           <ThemeProvider theme={this.state.theme}>
             <Helmet>
-              <style>{'body {background-color: #121212; }'}</style>
+              <style>{'body {background-color: #282828; }'}</style>
             </Helmet>
             <Login 
               setTok={this.setToken} 
@@ -69,10 +76,13 @@ class App extends React.Component {
         <div className="application">
           <ThemeProvider theme={this.state.theme}>
             <Helmet>
-              <style>{'body {background-color: #121212; }'}</style>
+              <style>{'body {background-color: #282828; }'}</style>
             </Helmet>
-            <AppBar />
-            <Main />
+            <AppBar signOut={this.signOut}/>
+            <Main 
+              username={this.state.username}
+              token={this.state.token}
+            />
           </ThemeProvider>
         </div>
       );

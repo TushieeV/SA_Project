@@ -4,9 +4,11 @@ import { withStyles } from '@material-ui/core/styles';
 const useStyles = theme => ({
     container: {
         width: "75%",
-        height: "87vh",
-        border: "1px solid white",
-        marginTop: "8px"
+        height: "84vh",
+        maxHeight: "84vh",
+        border: "1px solid gray",
+        marginTop: "1%",
+        overflow: 'auto'
     },
     bubbleContainer: {
         width: "100%",
@@ -55,15 +57,21 @@ class MessageBox extends React.Component {
     render() {
         const { classes } = this.props;
         const chatBubbles = this.props.messages.map((obj, i = 0) => (
-            <div className={`${classes.bubbleContainer} ${obj.direction}`} key={i}>
-                <div key={i++} className={(obj.direction === 'left') ? classes.leftMsg : classes.rightMsg}>
-                    {obj.message}
+            <div style={{marginLeft: "1%"}}>
+                <p style={{fontSize: "11px", color: "gray"}}>
+                    {`${obj.username} @ ${obj.date}`}
+                </p>
+                <div className={`${classes.bubbleContainer} ${obj.direction}`} key={i}>
+                    <div key={i++} className={(obj.direction === 'left') ? classes.leftMsg : classes.rightMsg}>
+                        {obj.message}
+                    </div>
                 </div>
             </div>
         ));
         return (
             <div className={classes.container}>
-                {chatBubbles}
+                {(this.props.messages.length > 0) && chatBubbles}
+                {(this.props.messages.length === 0) && `No messages yet`}
             </div>
         );
     }

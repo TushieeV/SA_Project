@@ -171,11 +171,20 @@ def request_chat():
         res = execute_query(sql, (requesting, requestor), 'one')
         if res is None:
             sql = '''
-                INSERT INTO Requests VALUES(?,?,?,?)
+                SELECT req_id
+                FROM Requests
+                WHERE (requestor = ? AND requesting = ?)
             '''
-            req_id = str(uuid.uuid4())
-            execute_query(sql, (req_id, requestor, requesting, 0), None)
-            return jsonify({"Success": True, "req_id": req_id})
+            res = execute_query(sql, (requestor, requesting), 'one')
+            if res is None:
+                sql = '''
+                    INSERT INTO Requests VALUES(?,?,?,?)
+                '''
+                req_id = str(uuid.uuid4())
+                execute_query(sql, (req_id, requestor, requesting, 0), None)
+                return jsonify({"Success": True, "req_id": req_id})
+            else:
+                return jsonify({"Message": "You have already requested to chat with this person."})
         else:
             return jsonify({"Message": "This person has already requested to chat with you."})
     else:

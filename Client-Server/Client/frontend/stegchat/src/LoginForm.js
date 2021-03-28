@@ -11,7 +11,8 @@ const keytar = require('electron').remote.require('keytar');
 
 const useStyles = theme => ({
     paper: {
-        marginTop: theme.spacing(8),
+        //marginTop: theme.spacing(8),
+        marginTop: "90%",
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -104,7 +105,7 @@ class LoginForm extends React.Component {
             const foundToken = this.state.tokens.some(el => el.account === user.username);
             if (foundAccount && !foundToken) {
                 this.props.setUsername(user.username);
-                fetch(`http://127.0.0.1:5000/get-token?username=${user.username}`)
+                fetch(`http://1.40.77.213:5000/get-token?username=${user.username}`)
                     .then(response => response.json())
                     .then(data => {
                         this.updateTokens(this.state.username, data.token);
@@ -119,7 +120,7 @@ class LoginForm extends React.Component {
                 this.props.setUsername(user.username);
                 keytar.getPassword('stegchat-tokens', user.username)
                     .then(result => {
-                        fetch(`http://127.0.0.1:5000/get-token?username=${user.username}&token=${result}`)
+                        fetch(`http://1.40.77.213:5000/get-token?username=${user.username}&token=${result}`)
                         .then(response => response.json())
                         .then(data => {
                             this.updateTokens(this.state.username, data.token);

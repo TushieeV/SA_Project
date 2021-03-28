@@ -3,7 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { CssBaseline } from "@material-ui/core";
 import MessageBar from './MessageBar';
-import MessageBox from './MessageBox'
+import MessageBox from './MessageBox';
+import RequestsSent from './RequestsSent';
 
 const useStyles = theme => ({
     flexBoxRow: {
@@ -32,7 +33,9 @@ class Main extends React.Component {
         var newMsgs = [...this.state.messages];
         newMsgs.push({
             message: message,
-            direction: "left"
+            direction: "left",
+            username: this.props.username,
+            date: (new Date()).toLocaleString()
         });
         this.setState({messages: newMsgs});
     }
@@ -43,6 +46,10 @@ class Main extends React.Component {
                 <CssBaseline />
                 <div class={classes.flexBoxColumn}>
                     <div class={classes.flexBoxRow}>
+                        <RequestsSent 
+                            username={this.props.username}
+                            token={this.props.token}    
+                        />
                         <MessageBox messages={this.state.messages} />
                     </div>
                     <MessageBar sendMessage={this.sendMessage} />

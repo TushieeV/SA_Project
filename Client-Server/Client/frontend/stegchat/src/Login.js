@@ -7,7 +7,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 const useStyles = theme => ({
     paper: {
-        marginTop: theme.spacing(8),
+        //marginTop: theme.spacing(8),
+        marginTop: "50%",
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -16,7 +17,7 @@ const useStyles = theme => ({
         width: '50%', // Fix IE 11 issue.
         marginTop: theme.spacing(1),
         position: 'absolute',
-        top: '30%',
+        top: '40%',
     },
     button: {
         margin: theme.spacing(3, 0, 2)
