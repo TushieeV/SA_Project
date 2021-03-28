@@ -43,7 +43,7 @@ class Main extends React.Component {
     componentWillUnmount() {
         clearInterval(this.checkMsgs);
     }
-    setCurr(sid, user) {
+    setCurr(user, sid) {
         this.setState({currSid: sid, currReceiver: user});
         for (var i = 0; i < this.state.sessions.length; i++) {
             if (this.state.sessions[i].ses_id === this.state.currSid) {
@@ -53,9 +53,6 @@ class Main extends React.Component {
         }
     }
     updateMessages() {
-        if (this.state.sessions.length > 0) {
-            console.log(this.state.sessions);
-        }
         this.state.sessions.map((obj) => {
             fetch(`http://1.40.77.213:5000/get-messages?ses_id=${obj.ses_id}`)
                 .then(res => res.json())
@@ -63,13 +60,16 @@ class Main extends React.Component {
                     if (data.messages) {
                         var newObj = obj;
                         newObj.messages = data.messages.map((obj) => {
-                            return {
+                        return {
                                 message: data.msg,
                                 direction: (data.sender === this.props.username) ? "left" : "right",
                                 date: obj.time,
                                 username: obj.sender
                             }
                         });
+                        if (obj.ses_id === this.state.currSid) {
+                            this.setState({messages: newObj.messages});
+                        }
                         var newSessions = [...this.state.sessions];
                         newSessions[this.state.sessions.indexOf(obj)] = newObj;
                         this.setState({sessions: newSessions});
@@ -96,7 +96,7 @@ class Main extends React.Component {
             date: (new Date()).toLocaleString()
         });
         this.setState({messages: newMsgs});*/
-        fetch(`http://1.40.77.213:5000/message?msg=${encodeURIComponent(message)}&sender=${this.props.token}&receiver=${this.currReceiver}&time=${(new Date()).toLocaleString()}&ses_id=${this.state.currSid}`, {method: "POST"})
+        fetch(`http://1.40.77.213:5000/message?msg=${encodeURIComponent(message)}&sender=${this.props.token}&receiver=${this.state.currReceiver}&time=${encodeURIComponent((new Date()).toLocaleString())}&ses_id=${this.state.currSid}`, {method: "POST"})
             .then(res => res.json())
             .then(data => {return;});
     }

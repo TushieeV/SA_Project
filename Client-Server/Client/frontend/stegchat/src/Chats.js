@@ -55,7 +55,7 @@ class Chats extends React.Component {
                 >
                     <li>
                         <ul>
-                            {this.props.sessions.map((obj, i = 0) => {
+                            {this.props.sessions.map((obj, i = 0) => (
                                 <ListItem 
                                     button 
                                     className={classes.listUser} 
@@ -67,7 +67,7 @@ class Chats extends React.Component {
                                     </ListItemIcon>
                                     <ListItemText primary={obj.username} />
                                 </ListItem>
-                            })}
+                            ))}
                             {(this.props.sessions.length === 0) &&
                                 <ListItem className={classes.listUser} >
                                     <ListItemText primary="No chats" />
