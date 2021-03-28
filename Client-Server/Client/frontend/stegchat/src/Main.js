@@ -4,7 +4,6 @@ import Container from '@material-ui/core/Container';
 import { CssBaseline } from "@material-ui/core";
 import MessageBar from './MessageBar';
 import MessageBox from './MessageBox';
-import RequestsSent from './RequestsSent';
 import Requests from './Requests';
 
 const useStyles = theme => ({

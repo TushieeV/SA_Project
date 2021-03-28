@@ -51,7 +51,8 @@ class RequestsReceived extends React.Component {
         };
         this.render = this.render.bind(this);
         this.updateReqs = this.updateReqs.bind(this);
-
+        this.acceptReq = this.acceptReq.bind(this);
+        this.rejectReq = this.rejectReq.bind(this);
     }
     componentWillMount() {
         this.checkReqs = setInterval(
@@ -82,6 +83,23 @@ class RequestsReceived extends React.Component {
                 }
             });
     }
+    acceptReq(obj) {
+        fetch(`http://1.40.77.213:5000/accept-request?req_id=${obj.req_id}&token=${this.props.token}`, {method: "POST"})
+            .then(res => res.json())
+            .then(data => {
+                if (data.ses_id) {
+                    this.props.addSession(obj.username, data.ses_id);
+                    var newMyReqs = [...this.state.myReqs];
+                    newMyReqs.splice(this.state.myReqs.indexOf(obj));
+                    this.setState({myReqs: newMyReqs});
+                }
+            });
+    }
+    rejectReq(obj) {
+        var newMyReqs = [...this.state.myReqs];
+        newMyReqs.splice(this.state.myReqs.indexOf(obj));
+        this.setState({myReqs: newMyReqs});
+    }
     render() {
         const { classes } = this.props;
         return (
@@ -108,12 +126,14 @@ class RequestsReceived extends React.Component {
                                         <IconButton
                                             variant="contained"
                                             color="primary"
+                                            onClick={(e) => {this.acceptReq(obj)}}
                                         >
                                             <CheckCircleIcon />
                                         </IconButton>
                                         <IconButton
                                             variant="contained"
                                             color="secondary"
+                                            onClick={(e) => {this.rejectReq(obj)}}
                                         >
                                             <CancelIcon />
                                         </IconButton>

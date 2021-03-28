@@ -7,7 +7,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import ListSubheader from "@material-ui/core/ListSubheader";
 import List from "@material-ui/core/List";
@@ -49,12 +48,35 @@ class RequestsSent extends React.Component {
             loading: false,
             msg: null,
             msgColor: null,
-            sentReqs: [],
+            sentReqs: []
         }
         this.handleReqsClick = this.handleReqsClick.bind(this);
         this.handleReqDialogClick = this.handleReqDialogClick.bind(this);
         this.handleDialogClose = this.handleDialogClose.bind(this);
         this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
+    }
+    componentWillMount() {
+        this.checkReqs = setInterval(
+            () => this.updateReqs(),
+            5000
+        );
+    }
+    componentWillUnmount() {
+        clearInterval(this.checkReqs);
+    }
+    updateReqs() {
+        this.state.sentReqs.map((obj) => {
+            fetch(`http://1.40.77.213:5000/check-request?req_id=${obj.req_id}&token=${this.props.token}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.ses_id) {
+                        var newSentReqs = [...this.state.sentReqs];
+                        newSentReqs.splice(this.state.sentReqs.indexOf(obj));
+                        this.setState({sentReqs: newSentReqs});
+                        this.props.addSession(obj.username, data.ses_id);
+                    }
+                });
+        });
     }
     handleDialogClose() {
         this.setState({
