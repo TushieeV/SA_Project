@@ -48,6 +48,10 @@ const useStyles = theme => ({
         display: "flex",
         flexDirection: "column",
         flexBasis: "100%"
+    },
+    topBubble: {
+        fontSize: "11px",
+        color: "gray"
     }
 });
 
@@ -62,9 +66,11 @@ class MessageBox extends React.Component {
         const { classes } = this.props;
         const chatBubbles = this.props.messages.map((obj, i = 0) => (
             <div style={{marginLeft: "1%"}}>
-                <p style={{fontSize: "11px", color: "gray"}}>
-                    {`${obj.username} @ ${obj.date}`}
-                </p>
+                <div className={`${classes.bubbleContainer} ${obj.direction}`}>
+                    <p style={{fontSize: "11px", color: "gray"}}>
+                        {`${obj.username} @ ${obj.date}`}
+                    </p>
+                </div>
                 <div className={`${classes.bubbleContainer} ${obj.direction}`} key={i}>
                     <div key={i++} className={(obj.direction === 'left') ? classes.leftMsg : classes.rightMsg}>
                         {obj.message}
