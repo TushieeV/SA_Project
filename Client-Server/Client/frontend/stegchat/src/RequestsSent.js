@@ -66,8 +66,12 @@ class RequestsSent extends React.Component {
     }
     handleDialogSubmit() {
         this.setState({loading: true})
-        if (this.state.reqUser === this.props.username) {
-            this.setState({msg: "Cannot send chat request to yourself!", msgColor: "red", loading: false})
+        if ((this.state.reqUser === this.props.username) || (this.state.reqUser === "")) {
+            if (this.state.reqUser === this.props.username) {
+                this.setState({msg: "Cannot send chat request to yourself!", msgColor: "red", loading: false});
+            } else {
+                this.setState({msg: "Please enter a username", msgColor: "red", loading: false});
+            }
         } else {
             fetch(`http://1.40.77.213:5000/request?requestor=${this.props.token}&requesting=${this.state.reqUser}`, {method: 'POST'})
                 .then(resp => resp.json())
@@ -151,7 +155,7 @@ class RequestsSent extends React.Component {
                         <li>
                             <ul>
                                 {this.state.sentReqs.map((obj, i = 0) => (
-                                    <ListItem button className={classes.listUser}>
+                                    <ListItem button className={classes.listUser} key={i}>
                                         <ListItemIcon>
                                             <AccountCircle />
                                         </ListItemIcon>

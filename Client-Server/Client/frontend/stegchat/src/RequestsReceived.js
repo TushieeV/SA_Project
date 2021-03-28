@@ -69,7 +69,7 @@ class RequestsReceived extends React.Component {
                 if (data.requests) {
                     data.requests.map((obj) => {
                         const found = this.state.myReqs.some(el => el.req_id === obj.req_id);
-                        if (!found) {
+                        if (!found && obj.requestor) {
                             var newMyReqs = [...this.state.myReqs];
                             newMyReqs.push({
                                 username: obj.requestor,
@@ -99,7 +99,7 @@ class RequestsReceived extends React.Component {
                     <li>
                         <ul>
                             {this.state.myReqs.map((obj, i = 0) => (
-                                <ListItem className={classes.listUser} style={{maxWidth: "70%"}}>
+                                <ListItem className={classes.listUser} key={i}>
                                     <ListItemIcon>
                                         <AccountCircle />
                                     </ListItemIcon>
