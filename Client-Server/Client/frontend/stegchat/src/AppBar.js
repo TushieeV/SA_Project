@@ -121,6 +121,7 @@ class PrimaryAppBar extends React.Component {
       >
         <MenuItem onClick={this.handleMenuClose}>Profile</MenuItem>
         <MenuItem onClick={this.props.signOut}>Sign Out</MenuItem>
+        <MenuItem onClick={this.props.deactivate}>Deactivate</MenuItem>
       </Menu>
     );
   

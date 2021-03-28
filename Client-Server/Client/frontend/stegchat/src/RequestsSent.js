@@ -16,12 +16,12 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
 
 const useStyles = theme => ({
     root: {
-        width: "25%",
-        margin: "1%",
-        border: "1px solid gray",
+        width: "100%",
         height: "28vh"
     },
     list: {
@@ -50,40 +50,11 @@ class RequestsSent extends React.Component {
             msg: null,
             msgColor: null,
             sentReqs: [],
-            myReqs: []
         }
         this.handleReqsClick = this.handleReqsClick.bind(this);
         this.handleReqDialogClick = this.handleReqDialogClick.bind(this);
         this.handleDialogClose = this.handleDialogClose.bind(this);
         this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
-    }
-    componentWillMount() {
-        this.checkReqs = setInterval(
-            () => this.updateReqs(),
-            5000
-        );
-    }
-    componentWillUnmount() {
-        clearInterval(this.checkReqs);
-    }
-    updateReqs() {
-        fetch(`http://1.40.77.213:5000/my-requests?token=${this.props.token}`)
-            .then(resp => resp.json())
-            .then(data => {
-                if (data.requests) {
-                    data.requests.map((obj) => {
-                        const found = this.state.myReqs.some(el => el.req_id === obj.req_id);
-                        if (!found) {
-                            var newMyReqs = [...this.state.myReqs];
-                            newMyReqs.push({
-                                username: obj.requestor,
-                                req_id: obj.req_id
-                            });
-                            this.setState({myReqs: newMyReqs});
-                        }    
-                    });
-                }
-            });
     }
     handleDialogClose() {
         this.setState({
@@ -125,7 +96,7 @@ class RequestsSent extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <Container className={classes.root}>
+            <Card className={classes.root}>
                 <Dialog
                     open={this.state.reqDialog}
                     aria-labelledby="form-dialog-title"
@@ -196,7 +167,7 @@ class RequestsSent extends React.Component {
                         </li>
                     </List>
                 </Grid>
-            </Container>
+            </Card>
         );
     }
 }

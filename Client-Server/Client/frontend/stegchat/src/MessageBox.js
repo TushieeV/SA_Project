@@ -1,12 +1,13 @@
 import React from "react";
 import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
 
 const useStyles = theme => ({
     container: {
         width: "75%",
         height: "84vh",
         maxHeight: "84vh",
-        border: "1px solid gray",
+        //border: "1px solid gray",
         marginTop: "1%",
         overflow: 'auto'
     },
@@ -69,10 +70,10 @@ class MessageBox extends React.Component {
             </div>
         ));
         return (
-            <div className={classes.container}>
+            <Card className={classes.container}>
                 {(this.props.messages.length > 0) && chatBubbles}
                 {(this.props.messages.length === 0) && `No messages yet`}
-            </div>
+            </Card>
         );
     }
 }

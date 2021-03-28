@@ -5,6 +5,7 @@ import { CssBaseline } from "@material-ui/core";
 import MessageBar from './MessageBar';
 import MessageBox from './MessageBox';
 import RequestsSent from './RequestsSent';
+import Requests from './Requests';
 
 const useStyles = theme => ({
     flexBoxRow: {
@@ -46,7 +47,7 @@ class Main extends React.Component {
                 <CssBaseline />
                 <div class={classes.flexBoxColumn}>
                     <div class={classes.flexBoxRow}>
-                        <RequestsSent 
+                        <Requests
                             username={this.props.username}
                             token={this.props.token}    
                         />

@@ -6,6 +6,8 @@ import {Helmet} from 'react-helmet';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import AppBar from './AppBar'
 
+const keytar = require('electron').remote.require('keytar');
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -25,6 +27,7 @@ class App extends React.Component {
     this.setUsername = this.setUsername.bind(this);
     this.setDh = this.setDh.bind(this);
     this.signOut = this.signOut.bind(this);
+    this.deactivate = this.deactivate.bind(this);
   }
   setToken(val) {
     this.setState({token: val});
@@ -42,6 +45,11 @@ class App extends React.Component {
       pkeyPosted: false,
       dh: null
     });
+  }
+  deactivate() {
+    keytar.deletePassword('stegchat', this.state.username);
+    keytar.deletePassword('stegchat-tokens', this.state.username);
+    this.signOut();
   }
   componentDidUpdate() {
     if (!this.state.pkeyPosted && this.state.dh) {
@@ -78,7 +86,10 @@ class App extends React.Component {
             <Helmet>
               <style>{'body {background-color: #282828; }'}</style>
             </Helmet>
-            <AppBar signOut={this.signOut}/>
+            <AppBar 
+              signOut={this.signOut}
+              deactivate={this.deactivate}  
+            />
             <Main 
               username={this.state.username}
               token={this.state.token}
