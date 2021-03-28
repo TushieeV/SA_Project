@@ -67,7 +67,7 @@ class App extends React.Component {
     if (!this.state.pkeyPosted) {
       return (
         <div className="application">
-          <ThemeProvider theme={this.state.theme}>
+          <ThemeProvider theme={this.state.theme} style={{width: "100vw"}}>
             <Helmet>
               <style>{'body {background-color: #282828; }'}</style>
             </Helmet>
@@ -82,7 +82,7 @@ class App extends React.Component {
     } else {
       return (
         <div className="application">
-          <ThemeProvider theme={this.state.theme}>
+          <ThemeProvider theme={this.state.theme} style={{width: "100vw"}}>
             <Helmet>
               <style>{'body {background-color: #282828; }'}</style>
             </Helmet>

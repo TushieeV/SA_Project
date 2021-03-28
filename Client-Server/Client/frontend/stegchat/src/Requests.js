@@ -3,7 +3,7 @@ import RequestsSent from './RequestsSent';
 import RequestsReceived from './RequestsReceived';
 import Container from '@material-ui/core/Container';
 import { withStyles } from '@material-ui/core/styles';
-
+import Chats from './Chats';
 
 const useStyles = theme => ({
     root: {
@@ -15,18 +15,6 @@ const useStyles = theme => ({
 class Requests extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            sessions: []
-        };
-        this.addSession = this.addSession.bind(this);
-    }
-    addSession(user, sid) {
-        var newSessions = [...this.state.sessions];
-        newSessions.push({
-            username: user,
-            ses_id: sid
-        });
-        this.setState({sessions: newSessions});
     }
     render() {
         const { classes } = this.props;
@@ -35,13 +23,14 @@ class Requests extends React.Component {
                 <RequestsSent 
                     username={this.props.username}
                     token={this.props.token}
-                    addSession={this.addSession}
+                    addSession={this.props.addSession}
                 />
                 <RequestsReceived 
                     username={this.props.username}
                     token={this.props.token}
-                    addSession={this.addSession}
+                    addSession={this.props.addSession}
                 />
+                <Chats  sessions={this.props.sessions}/>
             </Container>
         );
     }
