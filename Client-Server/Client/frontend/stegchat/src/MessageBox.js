@@ -55,6 +55,9 @@ class MessageBox extends React.Component {
     constructor(props) {
         super(props);
     }
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps);
+    }
     render() {
         const { classes } = this.props;
         const chatBubbles = this.props.messages.map((obj, i = 0) => (

@@ -61,8 +61,8 @@ class Main extends React.Component {
                         var newObj = obj;
                         newObj.messages = data.messages.map((obj) => {
                         return {
-                                message: data.msg,
-                                direction: (data.sender === this.props.username) ? "left" : "right",
+                                message: obj.msg,
+                                direction: (obj.sender === this.props.username) ? "left" : "right",
                                 date: obj.time,
                                 username: obj.sender
                             }
