@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from dh import DiffieHellman
+from encrypt_decrypt import encrypt, decrypt
 from txtEImg import txt_encode_img
 from imgDTxt import img_decode_txt
 
@@ -8,6 +9,7 @@ app = Flask(__name__)
 cors = CORS(app)
 
 myDh = None
+shared = None
 
 @app.route("/get-dh", methods=["GET"])
 def get_dh():
@@ -18,10 +20,10 @@ def get_dh():
 
 @app.route("/get-shared", methods=["GET"])
 def get_shared():
-    global myDh
+    global myDh, shared
     pkey = request.args.get('pkey')
-    skey = myDh.generate_shared_key(pkey)
-    return jsonify({'shared': skey})
+    shared = myDh.generate_shared_key(pkey)
+    return jsonify({'shared': shared})
 
 @app.route("/txt-E-img", methods=["GET"])
 def txtEimg():
@@ -38,6 +40,17 @@ def imgDtxt():
     msg = img_decode_txt(img, seed)
     return jsonify({"hidden_message": msg})
 
+@app.route("/encrypt", methods=["GET"])
+def encrypt_msg():
+    global shared
+    msg = request.args.get("msg")
+    return jsonify({"msg": encrypt(msg, shared)})
+
+@app.route("/decrypt", methods=["GET"])
+def decrypt_msg():
+    global shared
+    msg = request.args.get("msg")
+    return jsonify({"msg": decrypt(msg, shared)})
 
 if __name__ == '__main__':
     app.run(port='6001')

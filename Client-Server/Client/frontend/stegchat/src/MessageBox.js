@@ -32,7 +32,7 @@ const useStyles = theme => ({
         maxWidth: "100%",
     },
     rightMsg: {
-        borderRadius: "10px",
+        borderRadius: "15px",
         background: "#9c34eb",
         padding: "10px",
         display: "inline-block",
@@ -65,7 +65,7 @@ class MessageBox extends React.Component {
     render() {
         const { classes } = this.props;
         const chatBubbles = this.props.messages.map((obj, i = 0) => (
-            <div style={{marginLeft: "1%"}}>
+            <div style={{marginLeft: "1%", marginRight: "1%"}}>
                 <div className={`${classes.bubbleContainer} ${obj.direction}`}>
                     <p style={{fontSize: "11px", color: "gray"}}>
                         {`${obj.username} @ ${obj.date}`}
