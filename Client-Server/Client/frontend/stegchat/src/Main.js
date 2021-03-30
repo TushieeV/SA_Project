@@ -83,6 +83,9 @@ class Main extends React.Component {
                                 username: obj.sender
                             }
                         });
+                        var newSessions = [...this.state.sessions];
+                        newSessions[this.state.sessions.indexOf(obj)] = newObj;
+                        this.setState({sessions: newSessions});
                         if (this.state.currSession && obj.ses_id === this.state.currSession.ses_id) {
                             var msgs = [];
                             for (var i = 0; i < newObj.messages.length; i++) {
@@ -97,9 +100,6 @@ class Main extends React.Component {
                             //this.setState({messages: newObj.messages});
                             this.setState({messages: msgs});
                         }
-                        var newSessions = [...this.state.sessions];
-                        newSessions[this.state.sessions.indexOf(obj)] = newObj;
-                        this.setState({sessions: newSessions});
                     }
                 });
         });
@@ -157,7 +157,6 @@ class Main extends React.Component {
                         />
                         <MessageBox 
                             messages={this.state.messages} 
-                            sid={this.state.currSession.ses_id}
                         />
                     </div>
                     <MessageBar sendMessage={this.sendMessage} />
