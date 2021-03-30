@@ -5,6 +5,7 @@ import { CssBaseline } from "@material-ui/core";
 import MessageBar from './MessageBar';
 import MessageBox from './MessageBox';
 import Requests from './Requests';
+import { decrypt } from "./encrypt_decrypt";
 
 const useStyles = theme => ({
     flexBoxRow: {
@@ -25,7 +26,7 @@ class Main extends React.Component {
         this.state = {
             sessions: [],
             currSid: null,
-            currReceiver: null,
+            currSession: null,
             messages: [],
         };
         this.render = this.render.bind(this);
@@ -43,11 +44,26 @@ class Main extends React.Component {
     componentWillUnmount() {
         clearInterval(this.checkMsgs);
     }
-    setCurr(user, sid) {
-        this.setState({currSid: sid, currReceiver: user});
+    setCurr(user, sid, key) {
+        this.setState({currSession: {
+            username: user,
+            ses_id: sid,
+            key: key
+        }});
         for (var i = 0; i < this.state.sessions.length; i++) {
             if (this.state.sessions[i].ses_id === this.state.currSid) {
-                this.setState({messages: this.state.sessions[i].messages});
+                var newMsgs = [];
+                for (var j = 0; j < this.state.sessions[i].messages.length; j++) {
+                    const obj = this.state.sessions[i].messages[j];
+                    newMsgs.push({
+                        message: decrypt(obj.msg, this.state.currSession.pkey),
+                        direction: obj.direction,
+                        data: obj.date,
+                        username: obj.username
+                    });
+                }
+                //this.setState({messages: this.state.sessions[i].messages});
+                this.setState({messages: newMsgs})
                 break;
             }
         }
@@ -67,7 +83,7 @@ class Main extends React.Component {
                                 username: obj.sender
                             }
                         });
-                        if (obj.ses_id === this.state.currSid) {
+                        if (obj.ses_id === this.state.currSession.ses_id) {
                             this.setState({messages: newObj.messages});
                         }
                         var newSessions = [...this.state.sessions];
@@ -78,13 +94,26 @@ class Main extends React.Component {
         });
     }
     addSession(user, sid) {
-        var newSessions = [...this.state.sessions];
-        newSessions.push({
-            username: user,
-            ses_id: sid,
-            messages: []
-        });
-        this.setState({sessions: newSessions});
+        fetch(`http://1.40.77.213:5000/get-pkey?ses_id=${sid}&target=${user}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.pkey) {
+                    fetch(`http://127.0.0.1:6001/get-shared?pkey=${data.pkey}`)
+                        .then(res => res.json())
+                        .then(data2 => {
+                            if (data2.shared) {
+                                var newSessions = [...this.state.sessions];
+                                newSessions.push({
+                                    username: user,
+                                    ses_id: sid,
+                                    messages: [],
+                                    key: data2.shared
+                                });
+                            }
+                    });
+                    this.setState({sessions: newSessions});
+                }
+            });
     }
     sendMessage(e, message) {
         e.preventDefault();
@@ -96,7 +125,8 @@ class Main extends React.Component {
             date: (new Date()).toLocaleString()
         });
         this.setState({messages: newMsgs});*/
-        fetch(`http://1.40.77.213:5000/message?msg=${encodeURIComponent(message)}&sender=${this.props.token}&receiver=${this.state.currReceiver}&time=${encodeURIComponent((new Date()).toLocaleString())}&ses_id=${this.state.currSid}`, {method: "POST"})
+        const enc_msg = encrypt(message, this.state.currSession.key);
+        fetch(`http://1.40.77.213:5000/message?msg=${encodeURIComponent(enc_msg)}&sender=${this.props.token}&receiver=${this.state.currSession.username}&time=${encodeURIComponent((new Date()).toLocaleString())}&ses_id=${this.state.currSession.ses_id}`, {method: "POST"})
             .then(res => res.json())
             .then(data => {return;});
     }

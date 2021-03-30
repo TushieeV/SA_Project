@@ -60,7 +60,7 @@ class Chats extends React.Component {
                                     button 
                                     className={classes.listUser} 
                                     key={`chat${i}`}
-                                    onClick={(e) => {this.props.setCurr(obj.username, obj.ses_id)}}
+                                    onClick={(e) => {this.props.setCurr(obj.username, obj.ses_id, obj.key)}}
                                 >
                                     <ListItemIcon>
                                         <AccountCircle />
