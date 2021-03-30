@@ -26,7 +26,7 @@ class Main extends React.Component {
         this.state = {
             sessions: [],
             currSession: null,
-            messages: [],
+            messages: []
         };
         this.render = this.render.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
@@ -39,6 +39,29 @@ class Main extends React.Component {
             () => this.updateMessages(),
             3000
         );
+        this.updateCurrMsgs = setInterval(
+            () => this.updateCurrMsgs(),
+            1000
+        );
+    }
+    updateCurrMsgs() {
+        for (var i = 0; i < this.state.sessions.length; i++) {
+            if (this.state.sessions[i].ses_id === this.state.currSession.ses_id) {
+                var newMsgs = [];
+                for (var j = 0; j < this.state.sessions[i].messages.length; j++) {
+                    const obj = this.state.sessions[i].messages[j];
+                    newMsgs.push({
+                        message: obj.msg,
+                        direction: obj.direction,
+                        data: obj.date,
+                        username: obj.username
+                    });
+                }
+                //this.setState({messages: this.state.sessions[i].messages});
+                this.setState({messages: newMsgs})
+                break;
+            }
+        }
     }
     componentWillUnmount() {
         clearInterval(this.checkMsgs);
@@ -49,23 +72,7 @@ class Main extends React.Component {
             ses_id: sid,
             key: skey,
         }, messages: []}, () => {
-            for (var i = 0; i < this.state.sessions.length; i++) {
-                if (this.state.sessions[i].ses_id === this.state.currSession.ses_id) {
-                    var newMsgs = [];
-                    for (var j = 0; j < this.state.sessions[i].messages.length; j++) {
-                        const obj = this.state.sessions[i].messages[j];
-                        newMsgs.push({
-                            message: obj.msg,
-                            direction: obj.direction,
-                            data: obj.date,
-                            username: obj.username
-                        });
-                    }
-                    //this.setState({messages: this.state.sessions[i].messages});
-                    this.setState({messages: newMsgs})
-                    break;
-                }
-            }
+            this.updateCurrMsgs();
         });
     }
     updateMessages() {
@@ -75,31 +82,17 @@ class Main extends React.Component {
                 .then(data => {
                     if (data.messages && data.messages.length > 0) {
                         var newObj = obj;
-                        newObj.messages = data.messages.map((obj) => {
+                        newObj.messages = data.messages.map((obj1) => {
                         return {
-                                message: obj.msg,
-                                direction: (obj.sender === this.props.username) ? "left" : "right",
-                                date: obj.time,
-                                username: obj.sender
+                                message: decrypt(obj1.msg, obj.key),
+                                direction: (obj1.sender === this.props.username) ? "left" : "right",
+                                date: obj1.time,
+                                username: obj1.sender
                             }
                         });
                         var newSessions = [...this.state.sessions];
                         newSessions[this.state.sessions.indexOf(obj)] = newObj;
-                        this.setState({sessions: newSessions});
-                        if (this.state.currSession && obj.ses_id === this.state.currSession.ses_id) {
-                            var msgs = [];
-                            for (var i = 0; i < newObj.messages.length; i++) {
-                                var ob = newObj.messages[i];
-                                msgs.push({
-                                    message: decrypt(ob.message, this.state.currSession.key),
-                                    direction: ob.direction,
-                                    date: ob.date,
-                                    username: ob.username
-                                });
-                            }
-                            //this.setState({messages: newObj.messages});
-                            this.setState({messages: msgs});
-                        }
+                        this.setState({sessions: newSessions}, this.updateCurrMsgs);
                     }
                 });
         });

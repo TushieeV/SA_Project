@@ -77,8 +77,8 @@ class MessageBox extends React.Component {
         ));
         return (
             <Card className={classes.container}>
-                {(this.state.messages.length > 0) && chatBubbles}
-                {(this.state.messages.length === 0) && `No messages yet`}
+                {(this.props.messages.length > 0) && chatBubbles}
+                {(this.props.messages.length === 0) && `No messages yet`}
             </Card>
         );
     }
