@@ -67,7 +67,7 @@ class Main extends React.Component {
                         var newObj = obj;
                         newObj.messages = obj.messages.concat(data.messages.map((obj) => {
                         return {
-                                message: decrypt(obj.msg, obj.key),
+                                message: decrypt(obj.msg, newObj.key),
                                 direction: (obj.sender === this.props.username) ? "left" : "right",
                                 date: obj.time,
                                 username: obj.sender
