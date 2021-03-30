@@ -157,7 +157,6 @@ class Main extends React.Component {
                         />
                         <MessageBox 
                             messages={this.state.messages} 
-                            sid={this.state.currSession.ses_id}
                         />
                     </div>
                     <MessageBar sendMessage={this.sendMessage} />
