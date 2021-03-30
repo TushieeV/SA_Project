@@ -35,38 +35,32 @@ class Main extends React.Component {
         this.setCurr = this.setCurr.bind(this);
     }
     componentWillMount() {
-        this.checkMsgs = setInterval(
-            () => this.updateMessages(),
-            3000
-        );
+        if (this.state.sessions.length > 0) {
+            this.checkMsgs = setInterval(
+                () => this.updateMessages(),
+                3000
+            );
+            if (this.state.currSession) {
+                for (var i = 0; i < this.state.sessions.length; i++) {
+                    const obj = this.state.sessions[i];
+                    if (obj.ses_id === this.state.currSession.ses_id) {
+                        this.setState({messages: obj.messages});
+                    }
+                }
+            }
+        }
     }
     componentWillUnmount() {
-        clearInterval(this.checkMsgs);
+        if (this.state.sessions.length > 0) {
+            clearInterval(this.checkMsgs);
+        }
     }
     setCurr(user, sid, skey) {
         this.setState({currSession: {
             username: user,
             ses_id: sid,
             key: skey,
-        }, messages: []}, () => {
-            for (var i = 0; i < this.state.sessions.length; i++) {
-                if (this.state.sessions[i].ses_id === this.state.currSession.ses_id) {
-                    var newMsgs = [];
-                    for (var j = 0; j < this.state.sessions[i].messages.length; j++) {
-                        const obj = this.state.sessions[i].messages[j];
-                        newMsgs.push({
-                            message: obj.msg,
-                            direction: obj.direction,
-                            data: obj.date,
-                            username: obj.username
-                        });
-                    }
-                    //this.setState({messages: this.state.sessions[i].messages});
-                    this.setState({messages: newMsgs})
-                    break;
-                }
-            }
-        });
+        }, messages: []});
     }
     updateMessages() {
         this.state.sessions.map((obj) => {
@@ -95,7 +89,8 @@ class Main extends React.Component {
                                 });
                             }
                             //this.setState({messages: newObj.messages});
-                            this.setState({messages: msgs});
+                            //this.setState({messages: msgs});
+                            newObj.messages = msgs;
                         }
                         var newSessions = [...this.state.sessions];
                         newSessions[this.state.sessions.indexOf(obj)] = newObj;
