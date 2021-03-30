@@ -7,6 +7,8 @@ import ImageIcon from '@material-ui/icons/Image';
 import LockIcon from '@material-ui/icons/Lock';
 import StegDialog from "./StegDialog";
 
+const fs = require('fs');
+
 const useStyles = theme => ({
     textField: {
         width: "80%",
