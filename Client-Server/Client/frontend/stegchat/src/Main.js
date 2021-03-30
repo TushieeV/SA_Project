@@ -5,7 +5,7 @@ import { CssBaseline } from "@material-ui/core";
 import MessageBar from './MessageBar';
 import MessageBox from './MessageBox';
 import Requests from './Requests';
-import { decrypt } from "./encrypt_decrypt";
+import { encrypt, decrypt } from "./encrypt_decrypt";
 
 const useStyles = theme => ({
     flexBoxRow: {
@@ -25,7 +25,6 @@ class Main extends React.Component {
         super(props);
         this.state = {
             sessions: [],
-            currSid: null,
             currSession: null,
             messages: [],
         };
@@ -44,36 +43,37 @@ class Main extends React.Component {
     componentWillUnmount() {
         clearInterval(this.checkMsgs);
     }
-    setCurr(user, sid, key) {
+    setCurr(user, sid, skey) {
         this.setState({currSession: {
             username: user,
             ses_id: sid,
-            key: key
-        }});
-        for (var i = 0; i < this.state.sessions.length; i++) {
-            if (this.state.sessions[i].ses_id === this.state.currSid) {
-                var newMsgs = [];
-                for (var j = 0; j < this.state.sessions[i].messages.length; j++) {
-                    const obj = this.state.sessions[i].messages[j];
-                    newMsgs.push({
-                        message: decrypt(obj.msg, this.state.currSession.pkey),
-                        direction: obj.direction,
-                        data: obj.date,
-                        username: obj.username
-                    });
+            key: skey
+        }}, () => {
+            for (var i = 0; i < this.state.sessions.length; i++) {
+                if (this.state.sessions[i].ses_id === this.state.currSession.ses_id) {
+                    var newMsgs = [];
+                    for (var j = 0; j < this.state.sessions[i].messages.length; j++) {
+                        const obj = this.state.sessions[i].messages[j];
+                        newMsgs.push({
+                            message: obj.msg,
+                            direction: obj.direction,
+                            data: obj.date,
+                            username: obj.username
+                        });
+                    }
+                    //this.setState({messages: this.state.sessions[i].messages});
+                    this.setState({messages: newMsgs})
+                    break;
                 }
-                //this.setState({messages: this.state.sessions[i].messages});
-                this.setState({messages: newMsgs})
-                break;
             }
-        }
+        });
     }
     updateMessages() {
         this.state.sessions.map((obj) => {
             fetch(`http://1.40.77.213:5000/get-messages?ses_id=${obj.ses_id}`)
                 .then(res => res.json())
                 .then(data => {
-                    if (data.messages) {
+                    if (data.messages && data.messages.length > 0) {
                         var newObj = obj;
                         newObj.messages = data.messages.map((obj) => {
                         return {
@@ -83,8 +83,19 @@ class Main extends React.Component {
                                 username: obj.sender
                             }
                         });
-                        if (obj.ses_id === this.state.currSession.ses_id) {
-                            this.setState({messages: newObj.messages});
+                        if (this.state.currSession && obj.ses_id === this.state.currSession.ses_id) {
+                            var msgs = [];
+                            for (var i = 0; i < newObj.messages.length; i++) {
+                                var ob = newObj.messages[i];
+                                msgs.push({
+                                    message: decrypt(ob.message, this.currSession.key),
+                                    direction: ob.direction,
+                                    date: ob.date,
+                                    username: ob.username
+                                });
+                            }
+                            //this.setState({messages: newObj.messages});
+                            this.setState({messages: msgs});
                         }
                         var newSessions = [...this.state.sessions];
                         newSessions[this.state.sessions.indexOf(obj)] = newObj;
@@ -109,9 +120,9 @@ class Main extends React.Component {
                                     messages: [],
                                     key: data2.shared
                                 });
+                                this.setState({sessions: newSessions});
                             }
-                    });
-                    this.setState({sessions: newSessions});
+                        });
                 }
             });
     }
