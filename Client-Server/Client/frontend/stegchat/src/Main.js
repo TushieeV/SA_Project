@@ -47,8 +47,8 @@ class Main extends React.Component {
         this.setState({currSession: {
             username: user,
             ses_id: sid,
-            key: skey
-        }}, () => {
+            key: skey,
+        }, messages: []}, () => {
             for (var i = 0; i < this.state.sessions.length; i++) {
                 if (this.state.sessions[i].ses_id === this.state.currSession.ses_id) {
                     var newMsgs = [];
@@ -88,7 +88,7 @@ class Main extends React.Component {
                             for (var i = 0; i < newObj.messages.length; i++) {
                                 var ob = newObj.messages[i];
                                 msgs.push({
-                                    message: decrypt(ob.message, this.currSession.key),
+                                    message: decrypt(ob.message, this.state.currSession.key),
                                     direction: ob.direction,
                                     date: ob.date,
                                     username: ob.username
@@ -155,7 +155,10 @@ class Main extends React.Component {
                             sessions={this.state.sessions}
                             setCurr={this.setCurr}   
                         />
-                        <MessageBox messages={this.state.messages} />
+                        <MessageBox 
+                            messages={this.state.messages} 
+                            sid={this.state.currSession.ses_id}
+                        />
                     </div>
                     <MessageBar sendMessage={this.sendMessage} />
                 </div>
