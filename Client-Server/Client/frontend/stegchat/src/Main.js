@@ -70,7 +70,8 @@ class Main extends React.Component {
                                 message: decrypt(obj.msg, newObj.key),
                                 direction: (obj.sender === this.props.username) ? "left" : "right",
                                 date: obj.time,
-                                username: obj.sender
+                                username: obj.sender,
+                                type: obj.type
                             }
                         }));
                         if (this.state.currSession && obj.ses_id === this.state.currSession.ses_id) {
@@ -117,7 +118,7 @@ class Main extends React.Component {
                 }
             });
     }
-    sendMessage(e, message) {
+    sendMessage(e, message, type) {
         e.preventDefault();
         /*var newMsgs = [...this.state.messages];
         newMsgs.push({
@@ -128,7 +129,7 @@ class Main extends React.Component {
         });
         this.setState({messages: newMsgs});*/
         const enc_msg = encrypt(message, this.state.currSession.key);
-        fetch(`http://1.40.77.213:5000/message?msg=${encodeURIComponent(enc_msg)}&sender=${this.props.token}&receiver=${this.state.currSession.username}&time=${encodeURIComponent((new Date()).toLocaleString())}&ses_id=${this.state.currSession.ses_id}`, {method: "POST"})
+        fetch(`http://1.40.77.213:5000/message?msg=${encodeURIComponent(enc_msg)}&sender=${this.props.token}&receiver=${this.state.currSession.username}&time=${encodeURIComponent((new Date()).toLocaleString())}&ses_id=${this.state.currSession.ses_id}&type=${type}`, {method: "POST"})
             .then(res => res.json())
             .then(data => {return;});
     }

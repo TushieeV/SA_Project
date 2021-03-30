@@ -70,7 +70,8 @@ class MessageBox extends React.Component {
                 </div>
                 <div className={`${classes.bubbleContainer} ${obj.direction}`} key={i}>
                     <div key={i++} className={(obj.direction === 'left') ? classes.leftMsg : classes.rightMsg}>
-                        {obj.message}
+                        {(obj.type === "text") && obj.message}
+                        {(obj.type === "image") && <img src={`data:image/png;base64, ${obj.message}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
                     </div>
                 </div>
             </div>

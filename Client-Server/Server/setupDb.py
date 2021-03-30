@@ -44,6 +44,7 @@ def db_setup():
             receiver text,
             message BLOB,
             time text,
+            type text,
             FOREIGN KEY (session_id) REFERENCES Sessions(ses_id)
         )
     '''

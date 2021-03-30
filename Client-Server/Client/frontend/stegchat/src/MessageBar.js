@@ -45,17 +45,30 @@ class MessageBar extends React.Component {
         this.handleClose = this.handleClose.bind(this);
         this.sendMsg = this.sendMsg.bind(this);
     }
-    handleKeyPress(e) {
+    handleKeyPress(e, type) {
         if (e.key === "Enter") {
-            this.sendMsg(e);
+            this.sendMsg(e, type);
         }
     }
-    sendMsg(e) {
-        this.props.sendMessage(e, this.state.message);
+    sendMsg(e, type) {
+        this.props.sendMessage(e, this.state.message, type);
         this.setState({message: ""});
     }
     handleClose() {
         this.setState({open: false});
+    }
+    getB64Img(e) {
+        const contents = fs.readFileSync(e.target.files[0].path, {encoding: 'base64'});
+        console.log(contents);
+        this.setState({message: contents}, () => {this.sendMsg(e, "image")});
+    }
+    handleFileChange(e) {
+        if (e.target.files[0]) {
+            this.getB64Img(e);
+        }
+    }
+    triggerInput() {
+        document.querySelector("input[type='file']").click();
     }
     render() {
         const { classes } = this.props;
@@ -79,20 +92,22 @@ class MessageBar extends React.Component {
                         className: classes.input
                     }}
                     onChange={(e) => this.setState({message: e.target.value})}
-                    onKeyPress={(e) => this.handleKeyPress(e)}
+                    onKeyPress={(e) => this.handleKeyPress(e, "text")}
                 />
                 <IconButton 
                     variant="contained"
                     color="primary"
                     className={classes.button}
-                    onClick={(e) => this.sendMsg(e)}
+                    onClick={(e) => {this.sendMsg(e, "text")}}
                 >
                     <SendSharpIcon />
                 </IconButton>
+                <input type="file" accept="image/*" ref={this.fileInput} style={{display: "none"}} onChange={this.handleFileChange}/>
                 <IconButton
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    onClick={this.triggerInput}
                 >
                     <ImageIcon />
                 </IconButton>
