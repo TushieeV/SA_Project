@@ -298,6 +298,7 @@ def rec_msg():
 def get_msgs():
     #token = request.args.get('token')
     ses_id = request.args.get('ses_id')
+    last_msg = int(request.args.get('last_msg'))
     sql = '''
         SELECT *
         FROM Messages
@@ -317,7 +318,7 @@ def get_msgs():
             receiver = execute_query(sql, (receiver,), 'one')[0]
             msgs.append({'ses_id': ses_id, 'msg': msg.decode(), 'time': time, 'sender': sender, 'receiver': receiver})
         print(msgs)
-        return jsonify({'messages': msgs})
+        return jsonify({'messages': msgs[last_msg:]})
     else:
         return jsonify({"Message": "No messages yet."})
 

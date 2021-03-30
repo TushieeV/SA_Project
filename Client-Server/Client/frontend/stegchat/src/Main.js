@@ -60,21 +60,21 @@ class Main extends React.Component {
     }
     updateMessages() {
         this.state.sessions.map((obj) => {
-            fetch(`http://1.40.77.213:5000/get-messages?ses_id=${obj.ses_id}`)
+            fetch(`http://1.40.77.213:5000/get-messages?ses_id=${obj.ses_id}&last_msg=${obj.messages.length}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.messages && data.messages.length > 0) {
                         var newObj = obj;
-                        newObj.messages = data.messages.map((obj) => {
+                        newObj.messages = obj.messages.concat(data.messages.map((obj) => {
                         return {
-                                message: obj.msg,
+                                message: decrypt(obj.msg, obj.key),
                                 direction: (obj.sender === this.props.username) ? "left" : "right",
                                 date: obj.time,
                                 username: obj.sender
                             }
-                        });
+                        }));
                         if (this.state.currSession && obj.ses_id === this.state.currSession.ses_id) {
-                            var msgs = [];
+                            /*var msgs = [];
                             for (var i = 0; i < newObj.messages.length; i++) {
                                 var ob = newObj.messages[i];
                                 msgs.push({
@@ -83,10 +83,10 @@ class Main extends React.Component {
                                     date: ob.date,
                                     username: ob.username
                                 });
-                            }
+                            }*/
                             //this.setState({messages: newObj.messages});
-                            this.setState({messages: msgs});
-                            newObj.messages = msgs;
+                            this.setState({messages: newObj.messages});
+                            //newObj.messages = msgs;
                         }
                         var newSessions = [...this.state.sessions];
                         newSessions[this.state.sessions.indexOf(obj)] = newObj;
@@ -147,8 +147,7 @@ class Main extends React.Component {
                             setCurr={this.setCurr}   
                         />
                         <MessageBox 
-                            sessions={this.state.sessions}
-                            currSession={this.state.currSession}
+                            messages={this.state.messages}
                         />
                     </div>
                     <MessageBar sendMessage={this.sendMessage} />
