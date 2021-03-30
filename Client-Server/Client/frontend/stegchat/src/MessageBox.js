@@ -61,7 +61,17 @@ class MessageBox extends React.Component {
     }
     render() {
         const { classes } = this.props;
-        const chatBubbles = this.props.messages.map((obj, i = 0) => (
+        var messages = [];
+        if (this.props.currSession) {
+            for (var i = 0; i < this.props.sessions.length; i++) {
+                const obj = this.props.sessions[i];
+                if (obj.ses_id === this.props.currSession.ses_id) {
+                    messages = obj.messages;
+                    break;
+                }
+            }
+        }
+        const chatBubbles = messages.map((obj, i = 0) => (
             <div style={{marginLeft: "1%", marginRight: "1%"}}>
                 <div className={`${classes.bubbleContainer} ${obj.direction}`}>
                     <p style={{fontSize: "11px", color: "gray"}}>

@@ -26,7 +26,6 @@ class Main extends React.Component {
         this.state = {
             sessions: [],
             currSession: null,
-            messages: [],
         };
         this.render = this.render.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
@@ -35,25 +34,13 @@ class Main extends React.Component {
         this.setCurr = this.setCurr.bind(this);
     }
     componentWillMount() {
-        if (this.state.sessions.length > 0) {
-            this.checkMsgs = setInterval(
-                () => this.updateMessages(),
-                3000
-            );
-            if (this.state.currSession) {
-                for (var i = 0; i < this.state.sessions.length; i++) {
-                    const obj = this.state.sessions[i];
-                    if (obj.ses_id === this.state.currSession.ses_id) {
-                        this.setState({messages: obj.messages});
-                    }
-                }
-            }
-        }
+        this.checkMsgs = setInterval(
+            () => this.updateMessages(),
+            3000
+        );
     }
     componentWillUnmount() {
-        if (this.state.sessions.length > 0) {
-            clearInterval(this.checkMsgs);
-        }
+        clearInterval(this.checkMsgs);
     }
     setCurr(user, sid, skey) {
         this.setState({currSession: {
@@ -151,7 +138,8 @@ class Main extends React.Component {
                             setCurr={this.setCurr}   
                         />
                         <MessageBox 
-                            messages={this.state.messages} 
+                            sessions={this.state.sessions}
+                            currSession={this.state.currSession}
                         />
                     </div>
                     <MessageBar sendMessage={this.sendMessage} />
