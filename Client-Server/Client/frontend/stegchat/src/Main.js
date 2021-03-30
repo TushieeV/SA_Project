@@ -26,6 +26,7 @@ class Main extends React.Component {
         this.state = {
             sessions: [],
             currSession: null,
+            messages: []
         };
         this.render = this.render.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
@@ -47,7 +48,15 @@ class Main extends React.Component {
             username: user,
             ses_id: sid,
             key: skey,
-        }, messages: []});
+        }, messages: []}, () => {
+            for (var i = 0; i < this.state.sessions.length; i++) {
+                const obj = this.state.sessions[i];
+                if (this.state.currSession && obj.ses_id === this.state.currSession.ses_id) {
+                    this.setState({messages: obj.messages});
+                    break;
+                }
+            }
+        });
     }
     updateMessages() {
         this.state.sessions.map((obj) => {
@@ -76,7 +85,7 @@ class Main extends React.Component {
                                 });
                             }
                             //this.setState({messages: newObj.messages});
-                            //this.setState({messages: msgs});
+                            this.setState({messages: msgs});
                             newObj.messages = msgs;
                         }
                         var newSessions = [...this.state.sessions];

@@ -259,6 +259,14 @@ def rec_msg():
     time = request.args.get("time")
     ses_id = request.args.get("ses_id")
     sql = '''
+        SELECT *
+        FROM User_Tokens
+        WHERE token = ?
+    '''
+    res = execute_query(sql, (sender,), 'one')
+    if res is None:
+        return jsonify({"Message": "Invalid token"})
+    sql = '''
         SELECT token
         FROM User_Tokens
         WHERE username = ?
@@ -291,17 +299,23 @@ def get_msgs():
     #token = request.args.get('token')
     ses_id = request.args.get('ses_id')
     sql = '''
-        SELECT Messages.session_id, Messages.message, Messages.time, User_Tokens.username
+        SELECT *
         FROM Messages
-        LEFT OUTER JOIN User_Tokens
-        ON (Messages.session_id = ? AND User_Tokens.token = Messages.sender)
+        WHERE Messages.session_id = ?
     '''
     res = execute_query(sql, (ses_id,), 'all')
     if len(res) > 0:
         msgs = []
         for r in res:
-            ses_id, msg, time, sender = r
-            msgs.append({'ses_id': ses_id, 'msg': msg.decode(), 'time': time, 'sender': sender})
+            ses_id, sender, receiver, msg, time = r
+            sql = '''
+                SELECT username
+                FROM User_Tokens
+                where token = ?
+            '''
+            sender = execute_query(sql, (sender,), 'one')[0]
+            receiver = execute_query(sql, (receiver,), 'one')[0]
+            msgs.append({'ses_id': ses_id, 'msg': msg.decode(), 'time': time, 'sender': sender, 'receiver': receiver})
         print(msgs)
         return jsonify({'messages': msgs})
     else:

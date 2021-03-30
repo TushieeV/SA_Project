@@ -61,21 +61,7 @@ class MessageBox extends React.Component {
     }
     render() {
         const { classes } = this.props;
-        var messages = [];
-        if (this.props.currSession) {
-            for (var i = 0; i < this.props.sessions.length; i++) {
-                const obj = this.props.sessions[i];
-                if (obj.ses_id === this.props.currSession.ses_id) {
-                    if (obj.messages[0].username) {
-                        messages = obj.messages;
-                        break;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-        const chatBubbles = messages.map((obj, i = 0) => (
+        const chatBubbles = this.props.messages.map((obj, i = 0) => (
             <div style={{marginLeft: "1%", marginRight: "1%"}}>
                 <div className={`${classes.bubbleContainer} ${obj.direction}`}>
                     <p style={{fontSize: "11px", color: "gray"}}>
@@ -91,8 +77,8 @@ class MessageBox extends React.Component {
         ));
         return (
             <Card className={classes.container}>
-                {(messages.length > 0) && chatBubbles}
-                {(messages.length === 0) && `No messages yet`}
+                {(this.props.messages.length > 0) && chatBubbles}
+                {(this.props.messages.length === 0) && `No messages yet`}
             </Card>
         );
     }
