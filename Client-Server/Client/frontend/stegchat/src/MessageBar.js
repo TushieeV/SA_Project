@@ -42,10 +42,13 @@ class MessageBar extends React.Component {
             message: "",
             open: false
         };
+        this.fileInput = React.createRef();
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.render = this.render.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.sendMsg = this.sendMsg.bind(this);
+        this.getB64Img = this.getB64Img.bind(this);
+        this.handleFileChange = this.handleFileChange.bind(this);
     }
     handleKeyPress(e, type) {
         if (e.key === "Enter") {
@@ -66,7 +69,10 @@ class MessageBar extends React.Component {
     }
     handleFileChange(e) {
         if (e.target.files[0]) {
-            this.getB64Img(e);
+            //this.getB64Img(e);
+            const contents = fs.readFileSync(e.target.files[0].path, {encoding: 'base64'});
+            console.log(contents);
+            this.setState({message: contents}, () => {this.sendMsg(e, "image")});
         }
     }
     triggerInput() {

@@ -258,6 +258,7 @@ def rec_msg():
     receiver = request.args.get("receiver")
     time = request.args.get("time")
     ses_id = request.args.get("ses_id")
+    msg_type = request.args.get("type")
     sql = '''
         SELECT *
         FROM User_Tokens
@@ -283,9 +284,9 @@ def rec_msg():
         if res is not None:
             if receiver in res[0].split(','):
                 sql = '''
-                    INSERT INTO Messages VALUES(?,?,?,?,?)
+                    INSERT INTO Messages VALUES(?,?,?,?,?,?)
                 '''
-                execute_query(sql, (ses_id, sender, receiver, msg.encode(), time), None)
+                execute_query(sql, (ses_id, sender, receiver, msg.encode(), time, msg_type), None)
                 return jsonify({"Success": True})
             else:
                 return jsonify({"Message": "Permission denied."})
@@ -308,7 +309,7 @@ def get_msgs():
     if len(res) > 0:
         msgs = []
         for r in res:
-            ses_id, sender, receiver, msg, time = r
+            ses_id, sender, receiver, msg, time, msg_type = r
             sql = '''
                 SELECT username
                 FROM User_Tokens
@@ -316,7 +317,7 @@ def get_msgs():
             '''
             sender = execute_query(sql, (sender,), 'one')[0]
             receiver = execute_query(sql, (receiver,), 'one')[0]
-            msgs.append({'ses_id': ses_id, 'msg': msg.decode(), 'time': time, 'sender': sender, 'receiver': receiver})
+            msgs.append({'ses_id': ses_id, 'msg': msg.decode(), 'time': time, 'sender': sender, 'receiver': receiver, 'type': msg_type})
         print(msgs)
         return jsonify({'messages': msgs[last_msg:]})
     else:
