@@ -21,6 +21,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Card from '@material-ui/core/Card';
+import { server_addr } from './server_addr';
 
 const useStyles = theme => ({
     root: {
@@ -64,7 +65,7 @@ class RequestsReceived extends React.Component {
         clearInterval(this.checkReqs);
     }
     updateReqs() {
-        fetch(`http://1.40.77.213:5000/my-requests?token=${this.props.token}`)
+        fetch(`http://${server_addr}/my-requests?token=${this.props.token}`)
             .then(resp => resp.json())
             .then(data => {
                 if (data.requests) {
@@ -84,7 +85,7 @@ class RequestsReceived extends React.Component {
             });
     }
     acceptReq(obj) {
-        fetch(`http://1.40.77.213:5000/accept-request?req_id=${obj.req_id}&token=${this.props.token}`, {method: "POST"})
+        fetch(`http://${server_addr}/accept-request?req_id=${obj.req_id}&token=${this.props.token}`, {method: "POST"})
             .then(res => res.json())
             .then(data => {
                 console.log(data);

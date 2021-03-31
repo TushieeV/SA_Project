@@ -17,6 +17,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
+import { server_addr } from './server_addr';
 
 const useStyles = theme => ({
     root: {
@@ -66,7 +67,7 @@ class RequestsSent extends React.Component {
     }
     updateReqs() {
         this.state.sentReqs.map((obj) => {
-            fetch(`http://1.40.77.213:5000/check-request?req_id=${obj.req_id}&token=${this.props.token}`)
+            fetch(`http://${server_addr}/check-request?req_id=${obj.req_id}&token=${this.props.token}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.ses_id) {
@@ -95,7 +96,7 @@ class RequestsSent extends React.Component {
                 this.setState({msg: "Please enter a username", msgColor: "red", loading: false});
             }
         } else {
-            fetch(`http://1.40.77.213:5000/request?requestor=${this.props.token}&requesting=${this.state.reqUser}`, {method: 'POST'})
+            fetch(`http://${server_addr}/request?requestor=${this.props.token}&requesting=${this.state.reqUser}`, {method: 'POST'})
                 .then(resp => resp.json())
                 .then(data => {
                     console.log(data);

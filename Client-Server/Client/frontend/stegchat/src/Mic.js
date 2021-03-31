@@ -4,6 +4,8 @@ import IconButton from '@material-ui/core/IconButton';
 import MicIcon from '@material-ui/icons/Mic';
 import StopIcon from '@material-ui/icons/Stop';
 
+const fs = require('electron').remote.require('fs');
+
 export default class Mic extends React.Component {
   constructor(props) {
     super(props);
@@ -26,14 +28,18 @@ export default class Mic extends React.Component {
 
   onStop(recordedBlob) {
     console.log('recordedBlob is: ', recordedBlob);
-    /*var reader = new FileReader();
+    var reader = new FileReader();
     reader.readAsDataURL(recordedBlob.blob);
     reader.onloadend = function () {
         var base64string = reader.result;
         console.log(base64string);
-    }*/
-    recordedBlob.blob.arrayBuffer().then(res => console.log(res));
-
+    }
+    //recordedBlob.blob.arrayBuffer().then(res => console.log(res));
+    
+    //recordedBlob.blob.arrayBuffer().then(res => {
+    //  fs.writeFileSync('test.wav', Buffer(new Uint8Array(res)));
+    //});
+  
   }
 
   render() {
@@ -47,7 +53,7 @@ export default class Mic extends React.Component {
             onData={this.onData}
             strokeColor="#000000"
             backgroundColor="#FF4081"
-            mimeType="audio/wav"
+            mimeType="audio/webm; codecs=MCS_PCM"
           />
         </div>
         <IconButton

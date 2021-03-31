@@ -1,0 +1,1 @@
+export const server_addr = '1.41.111.3:5000';

@@ -5,8 +5,11 @@ import './App.css';
 import {Helmet} from 'react-helmet';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import AppBar from './AppBar'
+import Mic from './Mic'
+import { server_addr } from './server_addr';
 
 const keytar = require('electron').remote.require('keytar');
+
 
 class App extends React.Component {
   constructor(props) {
@@ -53,7 +56,7 @@ class App extends React.Component {
   }
   componentDidUpdate() {
     if (!this.state.pkeyPosted && this.state.dh) {
-      fetch(`http://1.40.77.213:5000/my-pkey?token=${this.state.token}&pkey=${this.state.dh.public_key}`, {method: 'post'})
+      fetch(`http://${server_addr}/my-pkey?token=${this.state.token}&pkey=${this.state.dh.public_key}`, {method: 'post'})
       .then(response => response.json())
       .then(data => {
         console.log(data);

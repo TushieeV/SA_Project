@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { server_addr } from './server_addr';
 
 const keytar = require('electron').remote.require('keytar');
 
@@ -105,7 +106,7 @@ class LoginForm extends React.Component {
             const foundToken = this.state.tokens.some(el => el.account === user.username);
             if (foundAccount && !foundToken) {
                 this.props.setUsername(user.username);
-                fetch(`http://1.40.77.213:5000/get-token?username=${user.username}`)
+                fetch(`http://${server_addr}/get-token?username=${user.username}`)
                     .then(response => response.json())
                     .then(data => {
                         this.updateTokens(this.state.username, data.token);
@@ -120,7 +121,7 @@ class LoginForm extends React.Component {
                 this.props.setUsername(user.username);
                 keytar.getPassword('stegchat-tokens', user.username)
                     .then(result => {
-                        fetch(`http://1.40.77.213:5000/get-token?username=${user.username}&token=${result}`)
+                        fetch(`http://${server_addr}/get-token?username=${user.username}&token=${result}`)
                         .then(response => response.json())
                         .then(data => {
                             this.updateTokens(this.state.username, data.token);
