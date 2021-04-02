@@ -89,6 +89,7 @@ class StegDialog extends React.Component {
             });
     }
     handleSendClick(e) {
+        e.preventDefault();
         var type = "";
         if (this.state.steg === "txtEimg" || this.state.steg === "audioEimg") {
             type = "image";
@@ -100,14 +101,14 @@ class StegDialog extends React.Component {
         this.props.sendMessage(e, this.state.encoded, type, this.state.steg);
         this.setState({
             img: null,
+            encImg: null,
             steg: "txtEimg",
             loading: false,
             encoded: null,
             msg: "",
             encpwd: "",
             audio: null
-        });
-        this.props.handleClose();
+        }, this.props.handleClose);
     }
     render() {
         const { classes } = this.props;
@@ -117,6 +118,7 @@ class StegDialog extends React.Component {
                 onClose={(e) => {
                     this.setState({
                         img: null,
+                        encImg: null,
                         steg: "txtEimg",
                         loading: false,
                         encoded: null,
