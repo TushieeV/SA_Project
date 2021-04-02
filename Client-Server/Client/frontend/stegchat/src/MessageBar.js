@@ -49,6 +49,10 @@ class MessageBar extends React.Component {
         this.sendMsg = this.sendMsg.bind(this);
         this.getB64Img = this.getB64Img.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
+        this.sendM = this.sendM.bind(this);
+    }
+    sendM(e, msg, type, steg) {
+        this.setState({message: msg}, () => {this.sendMsg(e, type, steg)});
     }
     handleKeyPress(e, type, steg) {
         if (e.key === "Enter") {
@@ -86,7 +90,7 @@ class MessageBar extends React.Component {
                 <StegDialog 
                     handleClose={this.handleClose}
                     open={this.state.open}
-                    sendMessage={this.sendMsg}    
+                    sendMessage={this.sendM}    
                 />
                 <TextField 
                     variant="outlined"
