@@ -52,7 +52,8 @@ class MessageBar extends React.Component {
         this.sendM = this.sendM.bind(this);
     }
     sendM(e, msg, type, steg) {
-        this.setState({message: msg}, () => {this.sendMsg(e, type, steg)});
+        //this.setState({message: msg}, () => {this.sendMsg(e, type, steg)});
+        this.props.sendMessage(e, msg, type, steg);
     }
     handleKeyPress(e, type, steg) {
         if (e.key === "Enter") {
