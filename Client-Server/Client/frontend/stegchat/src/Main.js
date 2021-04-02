@@ -72,7 +72,8 @@ class Main extends React.Component {
                                 direction: (obj.sender === this.props.username) ? "left" : "right",
                                 date: obj.time,
                                 username: obj.sender,
-                                type: obj.type
+                                type: obj.type,
+                                steg: obj.steg
                             }
                         }));
                         if (this.state.currSession && obj.ses_id === this.state.currSession.ses_id) {
