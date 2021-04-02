@@ -95,6 +95,16 @@ class StegDialog extends React.Component {
             type = "audio";
         }
         this.props.sendMessage(e, this.state.msg, type, this.state.steg);
+        this.setState({
+            img: null,
+            steg: "txtEimg",
+            loading: false,
+            encoded: null,
+            msg: "",
+            encpwd: "",
+            audio: null
+        });
+        this.props.handleClose();
     }
     render() {
         const { classes } = this.props;

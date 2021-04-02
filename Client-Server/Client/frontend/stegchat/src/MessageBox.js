@@ -174,6 +174,7 @@ class MessageBox extends React.Component {
                 <Dialog 
                     open={this.state.open}
                     aria-labelledby="msgbox-dialog"
+                    onClose={this.handleClose}
                 >
                     <DialogContent>
                         <DialogTitle id="msgbox-dialog">Decode message</DialogTitle>
