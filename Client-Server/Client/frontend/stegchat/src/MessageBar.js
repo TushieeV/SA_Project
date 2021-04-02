@@ -76,7 +76,8 @@ class MessageBar extends React.Component {
         }
     }
     triggerInput() {
-        document.querySelector("input[type='file' id='messagebar']").click();
+        //document.querySelector("input[type='file' id='messagebar']").click();
+        document.getElementById('messagebar').click()
     }
     render() {
         const { classes } = this.props;

@@ -68,7 +68,8 @@ class StegDialog extends React.Component {
         this.setState({img: contents});
     }
     triggerInput() {
-        document.querySelector("input[type='file' id='stegdialog']").click();
+        //document.querySelector("input[type='file' id='stegdialog']").click();
+        document.getElementById('stegdialog').click()
     }
     handleFileChange(e) {
         if (e.target.files[0]) {
