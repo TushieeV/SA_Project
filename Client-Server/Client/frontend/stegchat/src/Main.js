@@ -121,7 +121,9 @@ class Main extends React.Component {
             });
     }
     sendMessage(e, message, type, steg) {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
         /*var newMsgs = [...this.state.messages];
         newMsgs.push({
             message: message,

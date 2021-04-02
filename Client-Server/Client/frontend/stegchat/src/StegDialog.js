@@ -88,8 +88,7 @@ class StegDialog extends React.Component {
                 console.log(data.encoded_image.length);
             });
     }
-    handleSendClick(e) {
-        e.preventDefault();
+    handleSendClick() {
         var type = "";
         if (this.state.steg === "txtEimg" || this.state.steg === "audioEimg") {
             type = "image";
@@ -98,7 +97,7 @@ class StegDialog extends React.Component {
         } else if (this.state.steg === "txtEaudio" || this.state.steg === "imgEaudio") {
             type = "audio";
         }
-        this.props.sendMessage(e, this.state.encoded, type, this.state.steg);
+        this.props.sendMessage(null, this.state.encoded, type, this.state.steg);
         this.setState({
             img: null,
             encImg: null,
@@ -227,7 +226,7 @@ class StegDialog extends React.Component {
                                     <Button
                                         color="primary"
                                         variant="contained"
-                                        onClick={(e) => {this.handleSendClick(e)}}
+                                        onClick={this.handleSendClick}
                                     >
                                         Send
                                     </Button>
