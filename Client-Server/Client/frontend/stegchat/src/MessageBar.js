@@ -40,7 +40,10 @@ class MessageBar extends React.Component {
         super(props);
         this.state = {
             message: "",
-            open: false
+            type: null,
+            open: false,
+            steg: "None",
+            img: null
         };
         this.fileInput = React.createRef();
         this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -50,6 +53,8 @@ class MessageBar extends React.Component {
         this.getB64Img = this.getB64Img.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.sendM = this.sendM.bind(this);
+        this.handleMsgChange = this.handleMsgChange.bind(this);
+        this.openDialog = this.openDialog.bind(this);
     }
     sendM(e, msg, type, steg) {
         //this.setState({message: msg}, () => {this.sendMsg(e, type, steg)});
@@ -57,12 +62,13 @@ class MessageBar extends React.Component {
     }
     handleKeyPress(e, type, steg) {
         if (e.key === "Enter") {
+            e.preventDefault();
             this.sendMsg(e, type, steg);
         }
     }
     sendMsg(e, type, steg) {
-        this.props.sendMessage(e, this.state.message, type, steg);
-        this.setState({message: ""});
+        var msg = this.state.message;
+        this.setState({message: ""}, () => {this.props.sendMessage(e, msg, type, steg)});
     }
     handleClose() {
         this.setState({open: false});
@@ -70,19 +76,23 @@ class MessageBar extends React.Component {
     getB64Img(e) {
         const contents = fs.readFileSync(e.target.files[0].path, {encoding: 'base64'});
         console.log(contents);
-        this.setState({message: contents}, () => {this.sendMsg(e, "image")});
+        //this.setState({message: contents}, () => {this.sendMsg(e, "image")});
     }
     handleFileChange(e) {
         if (e.target.files[0]) {
-            //this.getB64Img(e);
             const contents = fs.readFileSync(e.target.files[0].path, {encoding: 'base64'});
             console.log(contents);
-            this.setState({message: contents}, () => {this.sendMsg(e, "image", "None")});
+            this.props.sendMessage(e, contents, "image", "None")
         }
     }
     triggerInput() {
-        //document.querySelector("input[type='file' id='messagebar']").click();
         document.getElementById('messagebar').click()
+    }
+    handleMsgChange(e) {
+        this.setState({message: e.target.value, type: "text"});
+    }
+    openDialog() {
+        this.setState({open: true});
     }
     render() {
         const { classes } = this.props;
@@ -106,7 +116,7 @@ class MessageBar extends React.Component {
                     InputProps={{
                         className: classes.input
                     }}
-                    onChange={(e) => this.setState({message: e.target.value})}
+                    onChange={(e) => this.handleMsgChange(e)}
                     onKeyPress={(e) => this.handleKeyPress(e, "text", "None")}
                 />
                 <IconButton 
@@ -130,7 +140,7 @@ class MessageBar extends React.Component {
                     variant="contained"
                     color="primary"
                     className={classes.button}
-                    onClick={(e) => {this.setState({open: true})}}
+                    onClick={this.openDialog}
                 >
                     <LockIcon />
                 </IconButton>

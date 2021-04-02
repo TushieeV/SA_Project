@@ -5,6 +5,9 @@ from datetime import datetime
 import uuid
 import json
 from setupDb import db_setup, execute_query
+import logging
+
+images = {}
 
 '''
 TODO:
@@ -19,6 +22,8 @@ Ideas:
 
 app = Flask(__name__)
 cors = CORS(app)
+log = logging.getLogger('werkzeug')
+log.disabled = True
 
 """
 Parameters:
@@ -285,10 +290,28 @@ def rec_msg():
         if res is not None:
             if receiver in res[0].split(','):
                 sql = '''
-                    INSERT INTO Messages VALUES(?,?,?,?,?,?,?)
+                    SELECT *
+                    FROM Messages
+                    WHERE (
+                        session_id = ? AND 
+                        sender = ? AND 
+                        receiver = ? AND 
+                        message = ? AND 
+                        time = ? AND 
+                        type = ? AND 
+                        steg = ?
+                    )
                 '''
-                execute_query(sql, (ses_id, sender, receiver, msg.encode(), time, msg_type, steg), None)
-                return jsonify({"Success": True})
+                res = execute_query(sql, (ses_id, sender, receiver, msg.encode(), time, msg_type, steg), 'one')
+                if res is None:
+                    sql = '''
+                        INSERT INTO Messages VALUES(?,?,?,?,?,?,?)
+                    '''
+                    execute_query(sql, (ses_id, sender, receiver, msg.encode(), time, msg_type, steg), None)
+                    print("Messaged")
+                    return jsonify({"Success": True})
+                else:
+                    return jsonify({"Message": "Duplicate message."})
             else:
                 return jsonify({"Message": "Permission denied."})
         else:
@@ -319,10 +342,16 @@ def get_msgs():
             sender = execute_query(sql, (sender,), 'one')[0]
             receiver = execute_query(sql, (receiver,), 'one')[0]
             msgs.append({'ses_id': ses_id, 'msg': msg.decode(), 'time': time, 'sender': sender, 'receiver': receiver, 'type': msg_type, 'steg': steg})
-        print(msgs)
         return jsonify({'messages': msgs[last_msg:]})
     else:
         return jsonify({"Message": "No messages yet."})
+
+@app.route("/upload", methods=["POST"])
+def upload():
+    img = request.args.get('img')
+    name = request.args.get('name')
+    images[name] = img.encode()
+    return jsonify({"Success": True})
 
 if __name__ == '__main__':
 

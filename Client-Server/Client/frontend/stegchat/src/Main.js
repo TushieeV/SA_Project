@@ -7,6 +7,7 @@ import MessageBox from './MessageBox';
 import Requests from './Requests';
 import { encrypt, decrypt } from "./encrypt_decrypt";
 import { server_addr } from './server_addr';
+import { sendMessageExt } from './sendMessage';
 
 const useStyles = theme => ({
     flexBoxRow: {
@@ -27,7 +28,8 @@ class Main extends React.Component {
         this.state = {
             sessions: [],
             currSession: null,
-            messages: []
+            messages: [],
+            sending: false
         };
         this.render = this.render.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
@@ -124,18 +126,8 @@ class Main extends React.Component {
         if (e) {
             e.preventDefault();
         }
-        /*var newMsgs = [...this.state.messages];
-        newMsgs.push({
-            message: message,
-            direction: "left",
-            username: this.props.username,
-            date: (new Date()).toLocaleString()
-        });
-        this.setState({messages: newMsgs});*/
-        const enc_msg = encrypt(message, this.state.currSession.key);
-        fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&sender=${this.props.token}&receiver=${this.state.currSession.username}&ses_id=${this.state.currSession.ses_id}&type=${type}&steg=${steg}`, {method: "POST"})
-            .then(res => res.json())
-            .then(data => {return;});
+        sendMessageExt(e, message, type, steg, this.state.currSession.key, this.props.token, this.state.currSession.username, this.state.currSession.ses_id);
+
     }
     render() {
         const { classes } = this.props;
