@@ -72,11 +72,11 @@ class MessageBar extends React.Component {
             //this.getB64Img(e);
             const contents = fs.readFileSync(e.target.files[0].path, {encoding: 'base64'});
             console.log(contents);
-            this.setState({message: contents}, () => {this.sendMsg(e, "image")});
+            this.setState({message: contents}, () => {this.sendMsg(e, "image", "None")});
         }
     }
     triggerInput() {
-        document.querySelector("input[type='file']").click();
+        document.querySelector("input[type='file' id='messagebar']").click();
     }
     render() {
         const { classes } = this.props;
@@ -111,7 +111,7 @@ class MessageBar extends React.Component {
                 >
                     <SendSharpIcon />
                 </IconButton>
-                <input type="file" accept="image/*" ref={this.fileInput} style={{display: "none"}} onChange={this.handleFileChange}/>
+                <input type="file" accept="image/*" id="messagebar" ref={this.fileInput} style={{display: "none"}} onChange={this.handleFileChange}/>
                 <IconButton
                     variant="contained"
                     color="primary"

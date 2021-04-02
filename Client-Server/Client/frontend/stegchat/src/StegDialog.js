@@ -68,7 +68,7 @@ class StegDialog extends React.Component {
         this.setState({img: contents});
     }
     triggerInput() {
-        document.querySelector("input[type='file']").click();
+        document.querySelector("input[type='file' id='stegdialog']").click();
     }
     handleFileChange(e) {
         if (e.target.files[0]) {
@@ -173,7 +173,7 @@ class StegDialog extends React.Component {
                             <Grid item xs>
                                 {(this.state.steg === "txtEimg" || this.state.steg === "imgEtxt" || this.state.steg === "audioEimg") &&
                                     <div>
-                                        <input type="file" accept="image/*" ref={this.fileInput} style={{display: "none"}} onChange={this.handleFileChange}/>
+                                        <input type="file" accept="image/*" id="stegdialog" ref={this.fileInput} style={{display: "none"}} onChange={this.handleFileChange}/>
                                         <Button 
                                             onClick={this.triggerInput}
                                             color="primary"
