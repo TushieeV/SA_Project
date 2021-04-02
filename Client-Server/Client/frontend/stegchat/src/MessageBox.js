@@ -3,8 +3,14 @@ import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import IconButton from '@material-ui/core/IconButton';
 import LockIcon from '@material-ui/icons/Lock';
-import { DialogContent } from "@material-ui/core";
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = theme => ({
     container: {
@@ -88,7 +94,7 @@ class MessageBox extends React.Component {
     }
     decode() {
         if (this.state.steg === "txtEimg") {
-            fetch(`http://127.0.0.1:6001/img-D-txt?img=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            fetch(`http://127.0.0.1:6001/img-D-txt?img=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.hidden_message) {
@@ -96,7 +102,7 @@ class MessageBox extends React.Component {
                     }
                 });
         } else if (this.state.steg === "imgEtxt") {
-            fetch(`http://127.0.0.1:6001/txt-D-img?txt=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            fetch(`http://127.0.0.1:6001/txt-D-img?txt=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
@@ -104,7 +110,7 @@ class MessageBox extends React.Component {
                 }
             });
         } else if (this.state.steg === "txtEaudio") {
-            fetch(`http://127.0.0.1:6001/audio-D-txt?audio=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            fetch(`http://127.0.0.1:6001/audio-D-txt?audio=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
@@ -112,7 +118,7 @@ class MessageBox extends React.Component {
                 }
             });
         } else if (this.state.steg === "imgEaudio") {
-            fetch(`http://127.0.0.1:6001/audio-D-img?audio=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            fetch(`http://127.0.0.1:6001/audio-D-img?audio=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
@@ -120,7 +126,7 @@ class MessageBox extends React.Component {
                 }
             });
         } else if (this.state.steg === "audioEimg") {
-            fetch(`http://127.0.0.1:6001/img-D-audio?img=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            fetch(`http://127.0.0.1:6001/img-D-audio?img=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
@@ -128,7 +134,7 @@ class MessageBox extends React.Component {
                 }
             });
         } else if (this.state.steg === "audioEtxt") {
-            fetch(`http://127.0.0.1:6001/txt-D-audio?txt=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            fetch(`http://127.0.0.1:6001/txt-D-audio?txt=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {

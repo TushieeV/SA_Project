@@ -140,7 +140,7 @@ class StegDialog extends React.Component {
                                     <MenuItem value="audioEimg">Encode audio within image</MenuItem>
                                 </Select>
                             </Grid>
-                            <Gird item xs={10}>
+                            <Grid item xs={10}>
                                 <TextField
                                     variant="outlined"
                                     margin="normal"
@@ -154,7 +154,7 @@ class StegDialog extends React.Component {
                                     value={this.state.encpwd}
                                     onChange={(e) => {this.setState({encpwd: e.target.value})}}
                                 />
-                            </Gird>
+                            </Grid>
                             <Grid item xs={10}>
                                 {(this.state.steg === "txtEimg" || this.state.steg === "imgEtxt" || this.state.steg === "audioEimg") && <img src={`data:image/png;base64, ${this.state.img}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
                             </Grid>
