@@ -50,7 +50,9 @@ class StegDialog extends React.Component {
             encImg: null,
             steg: "txtEimg",
             msg: "",
-            loading: false
+            loading: false,
+            encoded: null,
+            audio: null
         }
         this.fileInput = React.createRef();
         this.getB64Img = this.getB64Img.bind(this);
@@ -94,7 +96,7 @@ class StegDialog extends React.Component {
         } else if (this.state.steg === "txtEaudio" || this.state.steg === "imgEaudio") {
             type = "audio";
         }
-        this.props.sendMessage(e, this.state.msg, type, this.state.steg);
+        this.props.sendMessage(e, this.state.encoded, type, this.state.steg);
         this.setState({
             img: null,
             steg: "txtEimg",
