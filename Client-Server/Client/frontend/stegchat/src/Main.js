@@ -119,7 +119,7 @@ class Main extends React.Component {
                 }
             });
     }
-    sendMessage(e, message, type) {
+    sendMessage(e, message, type, steg) {
         e.preventDefault();
         /*var newMsgs = [...this.state.messages];
         newMsgs.push({
@@ -130,7 +130,7 @@ class Main extends React.Component {
         });
         this.setState({messages: newMsgs});*/
         const enc_msg = encrypt(message, this.state.currSession.key);
-        fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&sender=${this.props.token}&receiver=${this.state.currSession.username}&time=${encodeURIComponent((new Date()).toLocaleString())}&ses_id=${this.state.currSession.ses_id}&type=${type}`, {method: "POST"})
+        fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&sender=${this.props.token}&receiver=${this.state.currSession.username}&ses_id=${this.state.currSession.ses_id}&type=${type}&steg=${steg}`, {method: "POST"})
             .then(res => res.json())
             .then(data => {return;});
     }

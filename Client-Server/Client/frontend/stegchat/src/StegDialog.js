@@ -58,6 +58,7 @@ class StegDialog extends React.Component {
         this.handleSelectChange = this.handleSelectChange.bind(this);
         this.render = this.render.bind(this);
         this.handleEncodeClick = this.handleEncodeClick.bind(this);
+        this.handleSendClick = this.handleSendClick.bind(this);
     }
     getB64Img(urlImg) {
         const contents = fs.readFileSync(urlImg, {encoding: 'base64'});
@@ -77,12 +78,23 @@ class StegDialog extends React.Component {
     }
     handleEncodeClick() {
         this.setState({loading: true});
-        fetch(`http://127.0.0.1:6001/txt-E-img?img=${encodeURIComponent(this.state.img)}&msg=${encodeURIComponent(this.state.msg)}&seed=theway007`)
+        fetch(`http://127.0.0.1:6001/txt-E-img?img=${encodeURIComponent(this.state.img)}&msg=${encodeURIComponent(this.state.msg)}&seed=${encodeURIComponent(this.state.encpwd)}`)
             .then(response => response.json())
             .then(data => {
                 this.setState({encoded: data.encoded_image, loading: false});
                 console.log(data.encoded_image.length);
             });
+    }
+    handleSendClick(e) {
+        var type = "";
+        if (this.state.steg === "txtEimg" || this.state.steg === "audioEimg") {
+            type = "image";
+        } else if (this.state.steg === "imgEtxt" || this.state.steg === "audioEtxt") {
+            type = "text";
+        } else if (this.state.steg === "txtEaudio" || this.state.steg === "imgEaudio") {
+            type = "audio";
+        }
+        this.props.sendMessage(e, this.state.msg, type, this.state.steg);
     }
     render() {
         const { classes } = this.props;
@@ -96,6 +108,7 @@ class StegDialog extends React.Component {
                         loading: false,
                         encoded: null,
                         msg: "",
+                        encpwd: "",
                         audio: null
                     });
                     this.props.handleClose();
@@ -127,6 +140,21 @@ class StegDialog extends React.Component {
                                     <MenuItem value="audioEimg">Encode audio within image</MenuItem>
                                 </Select>
                             </Grid>
+                            <Gird item xs={10}>
+                                <TextField
+                                    variant="outlined"
+                                    margin="normal"
+                                    id="encpwd"
+                                    type="password"
+                                    label="Enter encryption password"
+                                    name="encpwd"
+                                    autoFocus
+                                    multiline
+                                    fullWidth
+                                    value={this.state.encpwd}
+                                    onChange={(e) => {this.setState({encpwd: e.target.value})}}
+                                />
+                            </Gird>
                             <Grid item xs={10}>
                                 {(this.state.steg === "txtEimg" || this.state.steg === "imgEtxt" || this.state.steg === "audioEimg") && <img src={`data:image/png;base64, ${this.state.img}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
                             </Grid>
@@ -178,6 +206,17 @@ class StegDialog extends React.Component {
                             </Grid>
                             <Grid>
                                 {this.state.encoded && <img src={`data:image/png;base64, ${this.state.encoded}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
+                            </Grid>
+                            <Grid item xs={10}>
+                                {this.state.encoded && 
+                                    <Button
+                                        color="primary"
+                                        variant="contained"
+                                        onClick={(e) => {this.handleSendClick(e)}}
+                                    >
+                                        Send
+                                    </Button>
+                                }
                             </Grid>
                         </Grid>
                     </div>

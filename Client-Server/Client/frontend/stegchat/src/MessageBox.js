@@ -1,6 +1,10 @@
 import React from "react";
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
+import IconButton from '@material-ui/core/IconButton';
+import LockIcon from '@material-ui/icons/Lock';
+import { DialogContent } from "@material-ui/core";
+import Button from '@material-ui/core/Button';
 
 const useStyles = theme => ({
     container: {
@@ -58,6 +62,80 @@ const useStyles = theme => ({
 class MessageBox extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            open: false,
+            steg: "",
+            type: "",
+            message: "",
+            encpwd: "",
+            decoded: "",
+            decodedType: ""
+        }
+        this.render = this.render.bind(this);
+        this.decode = this.decode.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+    }
+    handleClose() {
+        this.setState({
+            open: false,
+            steg: "",
+            type: "",
+            message: "",
+            encpwd: "",
+            decoded: "",
+            decodedType: ""
+        });
+    }
+    decode() {
+        if (this.state.steg === "txtEimg") {
+            fetch(`http://127.0.0.1:6001/img-D-txt?img=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.hidden_message) {
+                        this.setState({decoded: data.hidden_message, decodedType: "text"});
+                    }
+                });
+        } else if (this.state.steg === "imgEtxt") {
+            fetch(`http://127.0.0.1:6001/txt-D-img?txt=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.hidden_message) {
+                    this.setState({decoded: data.hidden_message, decodedType: "image"});
+                }
+            });
+        } else if (this.state.steg === "txtEaudio") {
+            fetch(`http://127.0.0.1:6001/audio-D-txt?audio=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.hidden_message) {
+                    this.setState({decoded: data.hidden_message, decodedType: "text"});
+                }
+            });
+        } else if (this.state.steg === "imgEaudio") {
+            fetch(`http://127.0.0.1:6001/audio-D-img?audio=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.hidden_message) {
+                    this.setState({decoded: data.hidden_message, decodedType: "image"});
+                }
+            });
+        } else if (this.state.steg === "audioEimg") {
+            fetch(`http://127.0.0.1:6001/img-D-audio?img=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.hidden_message) {
+                    this.setState({decoded: data.hidden_message, decodedType: "audio"});
+                }
+            });
+        } else if (this.state.steg === "audioEtxt") {
+            fetch(`http://127.0.0.1:6001/txt-D-audio?txt=${encodeURIComponent(this.state.message)}&seed=${encpwd}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.hidden_message) {
+                    this.setState({decoded: data.hidden_message, decodedType: "audio"});
+                }
+            });
+        }
     }
     render() {
         const { classes } = this.props;
@@ -72,12 +150,71 @@ class MessageBox extends React.Component {
                     <div key={i++} className={(obj.direction === 'left') ? classes.leftMsg : classes.rightMsg}>
                         {(obj.type === "text") && obj.message}
                         {(obj.type === "image") && <img src={`data:image/png;base64, ${obj.message}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
+                        {!(obj.steg === "None") && 
+                            <IconButton
+                                variant="contained"
+                                color="primary"
+                                onClick={(e) => {this.setState({steg: obj.steg, open: true, type: obj.type, message: obj.message})}}
+                            >
+                                <LockIcon />
+                            </IconButton>
+                        }
                     </div>
                 </div>
             </div>
         ));
         return (
             <Card className={classes.container}>
+                <Dialog 
+                    open={this.state.open}
+                    aria-labelledby="msgbox-dialog"
+                >
+                    <DialogContent>
+                        <DialogTitle id="msgbox-dialog">Decode message</DialogTitle>
+                        <div style={{flexGrow: 1}}>
+                            <Grid 
+                                container 
+                                spacing={3}
+                                direction="column"
+                                justify="center"
+                                alignItems="center"
+                            >
+                                <Grid item xs={10}>
+                                    {(this.state.type === "text") && this.state.message}
+                                    {(this.state.type === "image") && <img src={`data:image/png;base64, ${this.state.message}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        id="encpwd"
+                                        type="password"
+                                        label="Enter encryption password"
+                                        name="encpwd"
+                                        autoFocus
+                                        multiline
+                                        fullWidth
+                                        value={this.state.encpwd}
+                                        onChange={(e) => {this.setState({encpwd: e.target.value})}}
+                                    />
+                                </Grid>
+                                <Grid item xs={10}>
+                                    <Button
+                                        color="primary"
+                                        variant="contained"
+                                        onClick={this.decode}
+                                    >
+                                        Decode
+                                    </Button>
+                                </Grid>
+                                <Grid>
+                                    {(this.state.decodedType === "text") && this.state.decoded}
+                                    {(this.state.decodedType === "image") && <img src={`data:image/png;base64, ${this.state.decoded}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
+                                </Grid>
+                            </Grid>
+                        </div>
+                    </DialogContent>
+                </Dialog>
                 {(this.props.messages.length > 0) && chatBubbles}
                 {(this.props.messages.length === 0) && `No messages yet`}
             </Card>

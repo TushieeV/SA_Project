@@ -50,13 +50,13 @@ class MessageBar extends React.Component {
         this.getB64Img = this.getB64Img.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
     }
-    handleKeyPress(e, type) {
+    handleKeyPress(e, type, steg) {
         if (e.key === "Enter") {
-            this.sendMsg(e, type);
+            this.sendMsg(e, type, steg);
         }
     }
-    sendMsg(e, type) {
-        this.props.sendMessage(e, this.state.message, type);
+    sendMsg(e, type, steg) {
+        this.props.sendMessage(e, this.state.message, type, steg);
         this.setState({message: ""});
     }
     handleClose() {
@@ -84,7 +84,8 @@ class MessageBar extends React.Component {
             <div className={classes.msgInput}>
                 <StegDialog 
                     handleClose={this.handleClose}
-                    open={this.state.open}    
+                    open={this.state.open}
+                    sendMessage={this.sendMsg}    
                 />
                 <TextField 
                     variant="outlined"
@@ -100,13 +101,13 @@ class MessageBar extends React.Component {
                         className: classes.input
                     }}
                     onChange={(e) => this.setState({message: e.target.value})}
-                    onKeyPress={(e) => this.handleKeyPress(e, "text")}
+                    onKeyPress={(e) => this.handleKeyPress(e, "text", "None")}
                 />
                 <IconButton 
                     variant="contained"
                     color="primary"
                     className={classes.button}
-                    onClick={(e) => {this.sendMsg(e, "text")}}
+                    onClick={(e) => {this.sendMsg(e, "text", "None")}}
                 >
                     <SendSharpIcon />
                 </IconButton>
