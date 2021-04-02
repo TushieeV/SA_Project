@@ -164,10 +164,9 @@ class StegDialog extends React.Component {
                                     margin="normal"
                                     id="encpwd"
                                     type="password"
-                                    label="Enter encryption password"
+                                    label="Encryption password"
                                     name="encpwd"
                                     autoFocus
-                                    multiline
                                     fullWidth
                                     value={this.state.encpwd}
                                     onChange={(e) => {this.setState({encpwd: e.target.value})}}

@@ -11,6 +11,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Grid from '@material-ui/core/Grid';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = theme => ({
     container: {
@@ -89,16 +90,18 @@ class MessageBox extends React.Component {
             message: "",
             encpwd: "",
             decoded: "",
-            decodedType: ""
+            decodedType: "",
+            loading: false
         });
     }
     decode() {
+        this.setState({loading: true});
         if (this.state.steg === "txtEimg") {
             fetch(`http://127.0.0.1:6001/img-D-txt?img=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.hidden_message) {
-                        this.setState({decoded: data.hidden_message, decodedType: "text"});
+                        this.setState({decoded: data.hidden_message, decodedType: "text", loading: false});
                     }
                 });
         } else if (this.state.steg === "imgEtxt") {
@@ -106,7 +109,7 @@ class MessageBox extends React.Component {
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "image"});
+                    this.setState({decoded: data.hidden_message, decodedType: "image", loading: false});
                 }
             });
         } else if (this.state.steg === "txtEaudio") {
@@ -114,7 +117,7 @@ class MessageBox extends React.Component {
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "text"});
+                    this.setState({decoded: data.hidden_message, decodedType: "text", loading: false});
                 }
             });
         } else if (this.state.steg === "imgEaudio") {
@@ -122,7 +125,7 @@ class MessageBox extends React.Component {
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "image"});
+                    this.setState({decoded: data.hidden_message, decodedType: "image", loading: false});
                 }
             });
         } else if (this.state.steg === "audioEimg") {
@@ -130,7 +133,7 @@ class MessageBox extends React.Component {
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "audio"});
+                    this.setState({decoded: data.hidden_message, decodedType: "audio", loading: false});
                 }
             });
         } else if (this.state.steg === "audioEtxt") {
@@ -138,7 +141,7 @@ class MessageBox extends React.Component {
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "audio"});
+                    this.setState({decoded: data.hidden_message, decodedType: "audio", loading: false});
                 }
             });
         }
@@ -175,9 +178,10 @@ class MessageBox extends React.Component {
                     open={this.state.open}
                     aria-labelledby="msgbox-dialog"
                     onClose={this.handleClose}
+                    fullScreen
                 >
                     <DialogContent>
-                        <DialogTitle id="msgbox-dialog">Decode message</DialogTitle>
+                        <DialogTitle id="msgbox-dialog" style={{textAlign: "center"}}>Decode message</DialogTitle>
                         <div style={{flexGrow: 1}}>
                             <Grid 
                                 container 
@@ -199,10 +203,9 @@ class MessageBox extends React.Component {
                                         label="Enter encryption password"
                                         name="encpwd"
                                         autoFocus
-                                        multiline
                                         fullWidth
                                         value={this.state.encpwd}
-                                        onChange={(e) => {this.setState({encpwd: e.target.value})}}
+                                        onChange={(e) => {this.setState({encpwd: e.target.value, decoded: null})}}
                                     />
                                 </Grid>
                                 <Grid item xs={10}>
@@ -213,6 +216,7 @@ class MessageBox extends React.Component {
                                     >
                                         Decode
                                     </Button>
+                                    {this.state.loading && <CircularProgress />}
                                 </Grid>
                                 <Grid>
                                     {(this.state.decodedType === "text") && this.state.decoded}
