@@ -78,9 +78,13 @@ class MessageBox extends React.Component {
             decoded: "",
             decodedType: ""
         }
+        this.messagesEnd = React.createRef();
         this.render = this.render.bind(this);
         this.decode = this.decode.bind(this);
         this.handleClose = this.handleClose.bind(this);
+    }
+    scrollToBottom() {
+        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
     handleClose() {
         this.setState({
@@ -230,6 +234,7 @@ class MessageBox extends React.Component {
                         }
                     </div>
                 </div>
+                <div style={{float: "left", clear: "both"}} ref={this.messagesEnd}></div>
             </div>
         ));
         return (
