@@ -4,9 +4,12 @@ from dh import DiffieHellman
 from encrypt_decrypt import encrypt, decrypt
 from txtEImg import txt_encode_img
 from imgDTxt import img_decode_txt
+import logging
 
 app = Flask(__name__)
 cors = CORS(app)
+log = logging.getLogger('werkzeug')
+log.disabled = True
 
 myDh = None
 shared = None
@@ -27,16 +30,18 @@ def get_shared():
 
 @app.route("/txt-E-img", methods=["GET"])
 def txtEimg():
-    img = request.args.get("img")
-    msg = request.args.get("msg")
-    seed = request.args.get("seed")
+    req = request.json
+    img = req['img']
+    msg = req['msg']
+    seed = req['seed']
     enc_img = txt_encode_img(msg, img, seed)
     return jsonify({"encoded_image": enc_img})
 
 @app.route("/img-D-txt", methods=["GET"])
 def imgDtxt():
-    img = request.args.get("img")
-    seed = request.args.get("seed")
+    req = request.json
+    img = req['img']
+    seed = req['seed']
     msg = img_decode_txt(img, seed)
     return jsonify({"hidden_message": msg})
 

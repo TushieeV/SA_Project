@@ -114,6 +114,7 @@ class Main extends React.Component {
         })
             .then(res => res.json())
             .then(data => {
+                console.log(data)
                 if (data.pkey) {
                     fetch(`http://127.0.0.1:6001/get-shared?pkey=${data.pkey}`)
                         .then(res => res.json())

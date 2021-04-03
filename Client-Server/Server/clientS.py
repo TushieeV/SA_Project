@@ -120,6 +120,7 @@ def get_pkey():
 
 @app.route("/my-pkey", methods=["POST"])
 def store_my_pkey():
+    req = request.json
     #token = request.args.get('token')
     token = request.headers.get('token')
     sql = '''
@@ -129,7 +130,8 @@ def store_my_pkey():
     '''
     res = execute_query(sql, (token,), 'one')
     if res is not None:
-        pkey = request.args.get('pkey')
+        #pkey = request.args.get('pkey')
+        pkey = req['pkey']
         sql = '''
             INSERT INTO Public_Keys VALUES(?,?)
         '''

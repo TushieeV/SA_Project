@@ -97,7 +97,16 @@ class MessageBox extends React.Component {
     decode() {
         this.setState({loading: true});
         if (this.state.steg === "txtEimg") {
-            fetch(`http://127.0.0.1:6001/img-D-txt?img=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            //fetch(`http://127.0.0.1:6001/img-D-txt?img=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            fetch(`http://127.0.0.1:6001/img-D-txt`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    img: this.state.message,
+                    seed: this.state.encpwd
+                })
+            })
                 .then(res => res.json())
                 .then(data => {
                     if (data.hidden_message) {
@@ -105,7 +114,16 @@ class MessageBox extends React.Component {
                     }
                 });
         } else if (this.state.steg === "imgEtxt") {
-            fetch(`http://127.0.0.1:6001/txt-D-img?txt=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            //fetch(`http://127.0.0.1:6001/txt-D-img?txt=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            fetch(`http://127.0.0.1:6001/txt-D-img`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    txt: this.state.message,
+                    seed: this.state.encpwd
+                })
+            })
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
@@ -113,7 +131,16 @@ class MessageBox extends React.Component {
                 }
             });
         } else if (this.state.steg === "txtEaudio") {
-            fetch(`http://127.0.0.1:6001/audio-D-txt?audio=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            //fetch(`http://127.0.0.1:6001/audio-D-txt?audio=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            fetch(`http://127.0.0.1:6001/audio-D-txt`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    audio: this.state.message,
+                    seed: this.state.encpwd
+                })
+            })
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
@@ -121,7 +148,16 @@ class MessageBox extends React.Component {
                 }
             });
         } else if (this.state.steg === "imgEaudio") {
-            fetch(`http://127.0.0.1:6001/audio-D-img?audio=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            //fetch(`http://127.0.0.1:6001/audio-D-img?audio=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            fetch(`http://127.0.0.1:6001/audio-D-img`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    audio: this.state.message,
+                    seed: this.state.encpwd
+                })
+            })
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
@@ -129,7 +165,16 @@ class MessageBox extends React.Component {
                 }
             });
         } else if (this.state.steg === "audioEimg") {
-            fetch(`http://127.0.0.1:6001/img-D-audio?img=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            //fetch(`http://127.0.0.1:6001/img-D-audio?img=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            fetch(`http://127.0.0.1:6001/img-D-audio`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    img: this.state.message,
+                    seed: this.state.encpwd
+                })
+            })
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
@@ -137,7 +182,16 @@ class MessageBox extends React.Component {
                 }
             });
         } else if (this.state.steg === "audioEtxt") {
-            fetch(`http://127.0.0.1:6001/txt-D-audio?txt=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            //fetch(`http://127.0.0.1:6001/txt-D-audio?txt=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
+            fetch(`http://127.0.0.1:6001/txt-D-audio`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    txt: this.state.message,
+                    seed: this.state.encpwd
+                })
+            })
             .then(res => res.json())
             .then(data => {
                 if (data.hidden_message) {
