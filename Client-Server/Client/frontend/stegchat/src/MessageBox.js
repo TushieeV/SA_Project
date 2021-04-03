@@ -99,6 +99,7 @@ class MessageBox extends React.Component {
         if (this.state.steg === "txtEimg") {
             //fetch(`http://127.0.0.1:6001/img-D-txt?img=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             fetch(`http://127.0.0.1:6001/img-D-txt`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -116,6 +117,7 @@ class MessageBox extends React.Component {
         } else if (this.state.steg === "imgEtxt") {
             //fetch(`http://127.0.0.1:6001/txt-D-img?txt=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             fetch(`http://127.0.0.1:6001/txt-D-img`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
