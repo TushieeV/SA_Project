@@ -37,7 +37,7 @@ def txtEimg():
     enc_img = txt_encode_img(msg, img, seed)
     return jsonify({"encoded_image": enc_img})
 
-@app.route("/img-D-txt", methods=["GET"])
+@app.route("/img-D-txt", methods=["POST"])
 def imgDtxt():
     req = request.json
     img = req['img']
@@ -45,7 +45,7 @@ def imgDtxt():
     msg = img_decode_txt(img, seed)
     return jsonify({"hidden_message": msg})
 
-@app.route("/encrypt", methods=["GET"])
+@app.route("/encrypt", methods=["POST"])
 def encrypt_msg():
     global shared
     msg = request.args.get("msg")

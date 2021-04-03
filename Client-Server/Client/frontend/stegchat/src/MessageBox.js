@@ -133,6 +133,7 @@ class MessageBox extends React.Component {
         } else if (this.state.steg === "txtEaudio") {
             //fetch(`http://127.0.0.1:6001/audio-D-txt?audio=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             fetch(`http://127.0.0.1:6001/audio-D-txt`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -150,6 +151,7 @@ class MessageBox extends React.Component {
         } else if (this.state.steg === "imgEaudio") {
             //fetch(`http://127.0.0.1:6001/audio-D-img?audio=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             fetch(`http://127.0.0.1:6001/audio-D-img`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -167,6 +169,7 @@ class MessageBox extends React.Component {
         } else if (this.state.steg === "audioEimg") {
             //fetch(`http://127.0.0.1:6001/img-D-audio?img=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             fetch(`http://127.0.0.1:6001/img-D-audio`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -184,6 +187,7 @@ class MessageBox extends React.Component {
         } else if (this.state.steg === "audioEtxt") {
             //fetch(`http://127.0.0.1:6001/txt-D-audio?txt=${encodeURIComponent(this.state.message)}&seed=${this.state.encpwd}`)
             fetch(`http://127.0.0.1:6001/txt-D-audio`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },

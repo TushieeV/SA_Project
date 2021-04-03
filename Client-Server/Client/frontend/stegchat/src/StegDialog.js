@@ -83,6 +83,7 @@ class StegDialog extends React.Component {
         this.setState({loading: true});
         //fetch(`http://127.0.0.1:6001/txt-E-img?img=${encodeURIComponent(this.state.img)}&msg=${encodeURIComponent(this.state.msg)}&seed=${encodeURIComponent(this.state.encpwd)}`)
         fetch(`http://127.0.0.1:6001/txt-E-img`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
