@@ -116,6 +116,7 @@ class MessageBar extends React.Component {
                     InputProps={{
                         className: classes.input
                     }}
+                    disabled={this.props.session ? false : true}
                     onChange={(e) => this.handleMsgChange(e)}
                     onKeyPress={(e) => this.handleKeyPress(e, "text", "None")}
                 />
@@ -123,6 +124,7 @@ class MessageBar extends React.Component {
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    disabled={this.props.session ? false : true}
                     onClick={(e) => {this.sendMsg(e, "text", "None")}}
                 >
                     <SendSharpIcon />
@@ -132,6 +134,7 @@ class MessageBar extends React.Component {
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    disabled={this.props.session ? false : true}
                     onClick={this.triggerInput}
                 >
                     <ImageIcon />
@@ -140,6 +143,7 @@ class MessageBar extends React.Component {
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    disabled={this.props.session ? false : true}
                     onClick={this.openDialog}
                 >
                     <LockIcon />

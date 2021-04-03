@@ -157,7 +157,10 @@ class Main extends React.Component {
                             messages={this.state.messages}
                         />
                     </div>
-                    <MessageBar sendMessage={this.sendMessage} />
+                    <MessageBar 
+                        sendMessage={this.sendMessage} 
+                        session={this.state.currSession}
+                    />
                 </div>
             </Container>
         );

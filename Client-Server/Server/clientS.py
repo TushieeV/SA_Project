@@ -263,15 +263,29 @@ def check_req():
     
 @app.route("/message", methods=["POST"])
 def rec_msg():
-    msg = request.args.get("msg")
+    
+    req = request.json
+    
+    #msg = request.args.get("msg")
+    msg = req['msg']
+
     #sender = request.args.get("sender")
     sender = request.headers.get('token')
-    receiver = request.args.get("receiver")
+    
+    #receiver = request.args.get("receiver")
+    receiver = req['receiver']
+    
     time = datetime.now().strftime('%d/%m/%Y %I:%M:%S %p')
+    
     #ses_id = request.args.get("ses_id")
     ses_id = request.headers.get('ses_id')
-    msg_type = request.args.get("type")
-    steg = request.args.get("steg")
+    
+    #msg_type = request.args.get("type")
+    msg_type = req['type']
+
+    #steg = request.args.get("steg")
+    steg = req['steg']
+    
     sql = '''
         SELECT *
         FROM User_Tokens
