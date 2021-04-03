@@ -28,7 +28,7 @@ def get_shared():
     shared = myDh.generate_shared_key(pkey)
     return jsonify({'shared': shared})
 
-@app.route("/txt-E-img", methods=["GET"])
+@app.route("/txt-E-img", methods=["POST"])
 def txtEimg():
     req = request.json
     img = req['img']
