@@ -7,8 +7,6 @@ import json
 from setupDb import db_setup, execute_query
 import logging
 
-images = {}
-
 '''
 TODO:
     - Make the storage of tokens encrypted somehow
@@ -41,7 +39,8 @@ Conditions:
 @app.route("/get-token", methods=["GET"])
 def get_token():
     username = request.args.get('username')
-    tok = request.args.get('token')
+    #tok = request.args.get('token')
+    tok = request.headers.get('token')
     sql = '''
         SELECT username, token
         FROM User_Tokens
@@ -85,7 +84,8 @@ Conditions:
 """
 @app.route("/get-pkey", methods=["GET"])
 def get_pkey():
-    ses_id = request.args.get('ses_id')
+    #ses_id = request.args.get('ses_id')
+    ses_id = request.headers.get('ses_id')
     target = request.args.get('target')
     sql = '''
         SELECT token
@@ -120,7 +120,8 @@ def get_pkey():
 
 @app.route("/my-pkey", methods=["POST"])
 def store_my_pkey():
-    token = request.args.get('token')
+    #token = request.args.get('token')
+    token = request.headers.get('token')
     sql = '''
         SELECT username
         FROM User_Tokens
@@ -139,7 +140,8 @@ def store_my_pkey():
 
 @app.route("/my-requests", methods=["GET"])
 def get_chat_requests():
-    token = request.args.get('token')
+    #token = request.args.get('token')
+    token = request.headers.get('token')
     sql = '''
         SELECT Requests.req_id, User_Tokens.username, Requests.granted
         FROM Requests
@@ -159,7 +161,8 @@ def get_chat_requests():
 
 @app.route("/request", methods=["POST"])
 def request_chat():
-    requestor = request.args.get('requestor')
+    #requestor = request.args.get('requestor')
+    requestor = request.headers.get('token')
     requesting = request.args.get('requesting')
     sql = '''
         SELECT token
@@ -200,7 +203,8 @@ def request_chat():
 @app.route("/accept-request", methods=["POST"])
 def accept_request():
     req_id = request.args.get('req_id')
-    token = request.args.get('token')
+    #token = request.args.get('token')
+    token = request.headers.get('token')
     sql = '''
         SELECT *
         FROM Requests
@@ -232,7 +236,8 @@ def accept_request():
 @app.route("/check-request", methods=["GET"])
 def check_req():
     req_id = request.args.get('req_id')
-    token = request.args.get('token')
+    #token = request.args.get('token')
+    token = request.headers.get('token')
     sql = '''
         SELECT *
         FROM Requests
@@ -259,10 +264,12 @@ def check_req():
 @app.route("/message", methods=["POST"])
 def rec_msg():
     msg = request.args.get("msg")
-    sender = request.args.get("sender")
+    #sender = request.args.get("sender")
+    sender = request.headers.get('token')
     receiver = request.args.get("receiver")
     time = datetime.now().strftime('%d/%m/%Y %I:%M:%S %p')
-    ses_id = request.args.get("ses_id")
+    #ses_id = request.args.get("ses_id")
+    ses_id = request.headers.get('ses_id')
     msg_type = request.args.get("type")
     steg = request.args.get("steg")
     sql = '''
@@ -321,8 +328,8 @@ def rec_msg():
 
 @app.route("/get-messages", methods=["GET"])
 def get_msgs():
-    #token = request.args.get('token')
-    ses_id = request.args.get('ses_id')
+    #ses_id = request.args.get('ses_id')
+    ses_id = request.headers.get('ses_id')
     last_msg = int(request.args.get('last_msg'))
     sql = '''
         SELECT *
@@ -345,13 +352,6 @@ def get_msgs():
         return jsonify({'messages': msgs[last_msg:]})
     else:
         return jsonify({"Message": "No messages yet."})
-
-@app.route("/upload", methods=["POST"])
-def upload():
-    img = request.args.get('img')
-    name = request.args.get('name')
-    images[name] = img.encode()
-    return jsonify({"Success": True})
 
 if __name__ == '__main__':
 

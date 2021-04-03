@@ -67,7 +67,12 @@ class RequestsSent extends React.Component {
     }
     updateReqs() {
         this.state.sentReqs.map((obj) => {
-            fetch(`http://${server_addr}/check-request?req_id=${obj.req_id}&token=${this.props.token}`)
+            //fetch(`http://${server_addr}/check-request?req_id=${obj.req_id}&token=${this.props.token}`)
+            fetch(`http://${server_addr}/check-request?req_id=${obj.req_id}`, {
+                headers: {
+                    'token': this.props.token
+                }
+            })
                 .then(res => res.json())
                 .then(data => {
                     if (data.ses_id) {
@@ -96,7 +101,13 @@ class RequestsSent extends React.Component {
                 this.setState({msg: "Please enter a username", msgColor: "red", loading: false});
             }
         } else {
-            fetch(`http://${server_addr}/request?requestor=${this.props.token}&requesting=${this.state.reqUser}`, {method: 'POST'})
+            //fetch(`http://${server_addr}/request?requestor=${this.props.token}&requesting=${this.state.reqUser}`, {method: 'POST'})
+            fetch(`http://${server_addr}/request?requesting=${this.state.reqUser}`, {
+                method: 'POST',
+                headers: {
+                    'token': this.props.token
+                }
+            })
                 .then(resp => resp.json())
                 .then(data => {
                     console.log(data);

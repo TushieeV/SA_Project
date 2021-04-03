@@ -56,7 +56,13 @@ class App extends React.Component {
   }
   componentDidUpdate() {
     if (!this.state.pkeyPosted && this.state.dh) {
-      fetch(`http://${server_addr}/my-pkey?token=${this.state.token}&pkey=${this.state.dh.public_key}`, {method: 'post'})
+      //fetch(`http://${server_addr}/my-pkey?token=${this.state.token}&pkey=${this.state.dh.public_key}`, {method: 'post'})
+      fetch(`http://${server_addr}/my-pkey?pkey=${this.state.dh.public_key}`, {
+        method: 'post',
+        headers: {
+          'token': this.state.token
+        },
+      })
       .then(response => response.json())
       .then(data => {
         console.log(data);

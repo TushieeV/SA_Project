@@ -65,7 +65,12 @@ class RequestsReceived extends React.Component {
         clearInterval(this.checkReqs);
     }
     updateReqs() {
-        fetch(`http://${server_addr}/my-requests?token=${this.props.token}`)
+        //fetch(`http://${server_addr}/my-requests?token=${this.props.token}`)
+        fetch(`http://${server_addr}/my-requests`, {
+            headers: {
+                'token': this.props.token
+            }
+        })
             .then(resp => resp.json())
             .then(data => {
                 if (data.requests) {
@@ -85,7 +90,13 @@ class RequestsReceived extends React.Component {
             });
     }
     acceptReq(obj) {
-        fetch(`http://${server_addr}/accept-request?req_id=${obj.req_id}&token=${this.props.token}`, {method: "POST"})
+        //fetch(`http://${server_addr}/accept-request?req_id=${obj.req_id}&token=${this.props.token}`, {method: "POST"})
+        fetch(`http://${server_addr}/accept-request?req_id=${obj.req_id}`, {
+            method: "POST",
+            headers: {
+                'token': this.props.token
+            }
+        })
             .then(res => res.json())
             .then(data => {
                 console.log(data);

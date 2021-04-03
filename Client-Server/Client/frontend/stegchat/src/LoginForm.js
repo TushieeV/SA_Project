@@ -121,7 +121,12 @@ class LoginForm extends React.Component {
                 this.props.setUsername(user.username);
                 keytar.getPassword('stegchat-tokens', user.username)
                     .then(result => {
-                        fetch(`http://${server_addr}/get-token?username=${user.username}&token=${result}`)
+                        //fetch(`http://${server_addr}/get-token?username=${user.username}&token=${result}`)
+                        fetch(`http://${server_addr}/get-token?username=${user.username}`, {
+                           headers: {
+                               'token': result
+                           } 
+                        })
                         .then(response => response.json())
                         .then(data => {
                             this.updateTokens(this.state.username, data.token);

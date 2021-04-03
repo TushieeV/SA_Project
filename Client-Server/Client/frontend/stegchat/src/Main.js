@@ -63,7 +63,12 @@ class Main extends React.Component {
     }
     updateMessages() {
         this.state.sessions.map((obj) => {
-            fetch(`http://${server_addr}/get-messages?ses_id=${obj.ses_id}&last_msg=${obj.messages.length}`)
+            //fetch(`http://${server_addr}/get-messages?ses_id=${obj.ses_id}&last_msg=${obj.messages.length}`)
+            fetch(`http://${server_addr}/get-messages?last_msg=${obj.messages.length}`, {
+                headers: {
+                    'ses_id': obj.ses_id
+                }
+            })
                 .then(res => res.json())
                 .then(data => {
                     if (data.messages && data.messages.length > 0) {
@@ -101,7 +106,12 @@ class Main extends React.Component {
         });
     }
     addSession(user, sid) {
-        fetch(`http://${server_addr}/get-pkey?ses_id=${sid}&target=${user}`)
+        //fetch(`http://${server_addr}/get-pkey?ses_id=${sid}&target=${user}`)
+        fetch(`http://${server_addr}/get-pkey?target=${user}`, {
+            headers: {
+                'ses_id': sid
+            }
+        })
             .then(res => res.json())
             .then(data => {
                 if (data.pkey) {

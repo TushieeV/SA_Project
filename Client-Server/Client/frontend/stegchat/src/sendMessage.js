@@ -6,7 +6,14 @@ export function sendMessageExt(e, message, type, steg, key, sender, receiver, se
         e.preventDefault();
     }
     const enc_msg = encrypt(message, key);
-    fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&sender=${sender}&receiver=${receiver}&ses_id=${ses_id}&type=${type}&steg=${steg}`, {method: "POST"})
+    //fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&sender=${sender}&receiver=${receiver}&ses_id=${ses_id}&type=${type}&steg=${steg}`, {method: "POST"})
+    fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&receiver=${receiver}&type=${type}&steg=${steg}`, {
+        method: "POST",
+        headers: {
+            'token': sender,
+            'ses_id': ses_id
+        }
+    })
         .then(res => res.json())
         .then(data => {
             if (data.Message) {
