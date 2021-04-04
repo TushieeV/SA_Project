@@ -84,7 +84,8 @@ class MessageBox extends React.Component {
         this.handleClose = this.handleClose.bind(this);
     }
     scrollToBottom() {
-        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+        //this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+        document.getElementById("scrollend").scrollIntoView({ behavior: "smooth" });
     }
     componentDidUpdate() {
         this.scrollToBottom();
@@ -295,7 +296,7 @@ class MessageBox extends React.Component {
                 </Dialog>
                 {(this.props.messages.length > 0) && chatBubbles}
                 {(this.props.messages.length === 0) && `No messages yet`}
-                <div style={{float: "left", clear: "both"}} ref={this.messagesEnd}></div>
+                <div id="endscroll" style={{float: "left", clear: "both"}} ref={this.messagesEnd}></div>
             </Card>
         );
     }
