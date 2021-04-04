@@ -32,9 +32,20 @@ export default class Mic extends React.Component {
     reader.readAsDataURL(recordedBlob.blob);
     reader.onloadend = function () {
         var base64string = reader.result;
-        console.log(base64string);
+        //console.log(base64string);
+        //console.log(base64string.length);
     }
-    //recordedBlob.blob.arrayBuffer().then(res => console.log(res));
+    recordedBlob.blob.arrayBuffer().then(res => {
+      fs.writeFileSync('test.wav', Buffer(new Uint8Array(res)));
+      console.log(res);
+      var binary = '';
+      var bytes = new Uint8Array(res);
+      var len = bytes.byteLength;
+      for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      console.log(window.btoa(binary));
+    });
     
     //recordedBlob.blob.arrayBuffer().then(res => {
     //  fs.writeFileSync('test.wav', Buffer(new Uint8Array(res)));
@@ -53,7 +64,7 @@ export default class Mic extends React.Component {
             onData={this.onData}
             strokeColor="#000000"
             backgroundColor="#FF4081"
-            mimeType="audio/webm; codecs=MCS_PCM"
+            mimeType="audio/wav"
           />
         </div>
         <IconButton

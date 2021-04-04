@@ -47,8 +47,8 @@ def img_decode_txt(image, seed):
     return msg
 
 if __name__ == '__main__':
-    f = open('encoded', 'r')
+    f = open('encImg', 'r')
     img = f.read()
     f.close()
     img = img.rstrip('\n')
-    print(decode(img, "theway007"))
+    print(img_decode_txt(img, 'theway007'))

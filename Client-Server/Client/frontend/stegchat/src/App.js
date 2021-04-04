@@ -5,11 +5,10 @@ import './App.css';
 import {Helmet} from 'react-helmet';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import AppBar from './AppBar'
-import Mic from './Mic'
 import { server_addr } from './server_addr';
 
 const keytar = require('electron').remote.require('keytar');
-
+const fs = require('fs');
 
 class App extends React.Component {
   constructor(props) {

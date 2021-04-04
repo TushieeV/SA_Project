@@ -74,3 +74,8 @@ def txt_encode_img(message, image, seed):
     img.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
     return img_str
+
+if __name__ == '__main__':
+    img = open('b64img', 'r').read().rstrip('\n')
+    f = open('encImg', 'w+')
+    f.write(txt_encode_img('hello', img, 'theway007'))

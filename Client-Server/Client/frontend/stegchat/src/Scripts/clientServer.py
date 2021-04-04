@@ -4,6 +4,7 @@ from dh import DiffieHellman
 from encrypt_decrypt import encrypt, decrypt
 from txtEImg import txt_encode_img
 from imgDTxt import img_decode_txt
+from audioEImg import wav_encode_img
 import logging
 
 app = Flask(__name__)
@@ -35,6 +36,15 @@ def txtEimg():
     msg = req['msgToEncode']
     seed = req['seed']
     enc_img = txt_encode_img(msg, img, seed)
+    return jsonify({"encoded_image": enc_img})
+
+@app.route("/audio-E-img", methods=["POST"])
+def audioEimg():
+    req = request.json
+    audio = req['msgToEncode']
+    img = req['msgEncodedIn']
+    seed = req['seed']
+    enc_img = wav_encode_img(audio, img, seed)
     return jsonify({"encoded_image": enc_img})
 
 @app.route("/img-D-txt", methods=["POST"])

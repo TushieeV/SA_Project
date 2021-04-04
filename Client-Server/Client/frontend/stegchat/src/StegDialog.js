@@ -13,7 +13,6 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Mic from './Mic';
 
 const fs = require('fs');
 
@@ -55,7 +54,8 @@ class StegDialog extends React.Component {
             encoded: null,
             audio: null
         }
-        this.fileInput = React.createRef();
+        this.fileInputImg = React.createRef();
+        this.fileInputAudio = React.createRef();
         this.getB64Img = this.getB64Img.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.handleSelectChange = this.handleSelectChange.bind(this);
@@ -72,13 +72,13 @@ class StegDialog extends React.Component {
             this.setState({msgEncodedIn: contents});
         }
     }
-    triggerInput() {
+    triggerInput(id) {
         //document.querySelector("input[type='file' id='stegdialog']").click();
-        document.getElementById('stegdialog').click()
+        document.getElementById(id).click()
     }
     handleFileChange(e, num) {
         if (e.target.files[0]) {
-            this.getB64Img(e.target.files[0].path);
+            this.getB64Img(e.target.files[0].path, num);
         }
     }
     handleSelectChange(e) {
@@ -218,13 +218,13 @@ class StegDialog extends React.Component {
                                             justify="center"
                                             alignItems="center"
                                         >
-                                            <input type="file" accept="image/*" id="stegdialog" ref={this.fileInput} style={{display: "none"}} onChange={(e) => {this.handleFileChange(e, 1)}}/>
+                                            <input type="file" accept="image/*" id="stegdialogImg" ref={this.fileInputImg} style={{display: "none"}} onChange={(e) => {this.handleFileChange(e, 1)}}/>
                                             <Grid item xs={12}>
                                                 <img src={`data:image/png;base64, ${this.state.msgToEncode}`} style={{maxWidth: "400px", maxHeight: "400px"}} />
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Button 
-                                                    onClick={this.triggerInput}
+                                                    onClick={() => {this.triggerInput("stegdialogImg")}}
                                                     color="primary"
                                                     variant="contained"
                                                 >
@@ -234,7 +234,33 @@ class StegDialog extends React.Component {
                                         </Grid>
                                     </div>
                                 }
-                                {(this.state.steg1 === "audio") && <Mic />}
+                                {(this.state.steg1 === "audio") &&
+                                    <div>
+                                        <Grid
+                                            container
+                                            spacing={3}
+                                            direction="column"
+                                            justify="center"
+                                            alignItems="center"
+                                        >
+                                            <input type="file" accept="audio/*" id="stegdialogAudio" ref={this.fileInputAudio} style={{display: "none"}} onChange={(e) => {this.handleFileChange(e, 1)}}/>
+                                            <Grid item xs={12}>
+                                                <audio controls
+                                                    src={`data:audio/wav;base64,${this.state.msgToEncode}`}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <Button 
+                                                    onClick={() => {this.triggerInput("stegdialogAudio")}}
+                                                    color="primary"
+                                                    variant="contained"
+                                                >
+                                                    Upload Audio
+                                                </Button>
+                                            </Grid>    
+                                        </Grid>
+                                    </div>
+                                }
                             </Grid>
                             <Grid item xs={12} className={(this.state.steg2 === "txt") ? classes.textField : null}>
                                 {(this.state.steg2 === "txt") &&
@@ -260,13 +286,13 @@ class StegDialog extends React.Component {
                                             justify="center"
                                             alignItems="center"
                                         >
-                                            <input type="file" accept="image/*" id="stegdialog" ref={this.fileInput} style={{display: "none"}} onChange={(e) => {this.handleFileChange(e, 2)}}/>
+                                            <input type="file" accept="image/*" id="stegdialogImg" ref={this.fileInputImg} style={{display: "none"}} onChange={(e) => {this.handleFileChange(e, 2)}}/>
                                             <Grid item xs={12}>
                                                 <img src={`data:image/png;base64, ${this.state.msgEncodedIn}`} style={{maxWidth: "400px", maxHeight: "400px"}} />
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Button 
-                                                    onClick={this.triggerInput}
+                                                    onClick={() => {this.triggerInput("stegdialogImg")}}
                                                     color="primary"
                                                     variant="contained"
                                                 >
@@ -276,7 +302,7 @@ class StegDialog extends React.Component {
                                         </Grid>
                                     </div>
                                 }
-                                {(this.state.steg2 === "audio") && <Mic />}
+                                {(this.state.steg2 === "audio")}
                             </Grid>
                             <Grid item xs={10}>
                                 {(this.state.msgToEncode && this.state.msgEncodedIn) && 
