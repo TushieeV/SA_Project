@@ -88,7 +88,7 @@ class StegDialog extends React.Component {
     handleEncodeClick() {
         this.setState({loading: true});
         //fetch(`http://127.0.0.1:6001/txt-E-img?img=${encodeURIComponent(this.state.img)}&msg=${encodeURIComponent(this.state.msg)}&seed=${encodeURIComponent(this.state.encpwd)}`)
-        const route = this.state.steg1 + 'E' + this.state.steg2;
+        const route = this.state.steg1 + '-E-' + this.state.steg2;
         fetch(`http://127.0.0.1:6001/${route}`, {
             method: 'POST',
             headers: {

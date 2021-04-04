@@ -85,7 +85,7 @@ class MessageBox extends React.Component {
     }
     scrollToBottom() {
         //this.messagesEnd.scrollIntoView({ behavior: "smooth" });
-        document.getElementById("scrollend").scrollIntoView({ behavior: "smooth" });
+        document.getElementById("endscroll").scrollIntoView({ behavior: "smooth" });
     }
     componentDidUpdate() {
         this.scrollToBottom();
