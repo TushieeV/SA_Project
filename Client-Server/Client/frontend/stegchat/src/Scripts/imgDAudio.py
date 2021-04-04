@@ -4,11 +4,8 @@ import struct
 import random
 from PIL import Image
 import math
-
-SEED = 50
-SIZE = 2500
-#nSlots = 32
-nSlots = 4
+from io import BytesIO
+import base64
 
 def binArr(num, size):
     b = "{0:b}".format(num)
@@ -38,44 +35,51 @@ def getLastBits(num, size, n):
     b = binArr(num, size)
     return b[len(b)-n:len(b)]
 
-random.seed(SEED)
+def img_decode_audio(image, seed):
 
-img = Image.open("encodedAudio.png").convert("RGB")
-a = np.asarray(img)
+    SIZE = 2500
+    nSlots = 4
 
-lenStartY = random.randint(0, SIZE - 21)
-num = ''
-for i in range(lenStartY, lenStartY + 21):
-    num += getLastBits(a[SIZE - 1][i][0], 8, 1)
+    random.seed(seed)
 
-length = int(num, 2)
+    #img = Image.open("encodedAudio.png").convert("RGB")
+    img = Image.open(BytesIO(base64.b64decode(image)))
+    a = np.asarray(img)
 
-print(length)
+    lenStartY = random.randint(0, SIZE - 21)
+    num = ''
+    for i in range(lenStartY, lenStartY + 21):
+        num += getLastBits(a[SIZE - 1][i][0], 8, 1)
 
-if length >= int((SIZE * SIZE) / nSlots):
-    length = random.randint(0, int((SIZE * SIZE) / nSlots) - 1)
+    length = int(num, 2)
 
+    if length >= int((SIZE * SIZE) / nSlots):
+        length = random.randint(0, int((SIZE * SIZE) / nSlots) - 1)
 
+    audio = np.zeros((length, 2), dtype=float)
 
-audio = np.zeros((length, 2), dtype=float)
+    slotC = [(i, j) for i in range(0, SIZE - nSlots, nSlots) for j in range(SIZE)]
+    chosenSlots = random.sample(slotC, length)
 
-slotC = [(i, j) for i in range(0, SIZE - nSlots, nSlots) for j in range(SIZE)]
-chosenSlots = random.sample(slotC, length)
+    #for k in range(length):
+    k = 0
+    for c in chosenSlots:
+        #c = random.choice(slotC)
+        (x, y) = c
+        #slotC.remove(c)
+        currF = ''
+        for i in range(x, x + nSlots):
+            currF += getLastBits(a[i][y][0], 8, 4) + getLastBits(a[i][y][1], 8, 4)
+            #currF += getLastBits(a[i][y][0], 8, 3) + getLastBits(a[i][y][1], 8, 3) + getLastBits(a[i][y][2], 8, 3)
+        audio[k] = [round(bin_to_float(currF), 3), round(bin_to_float(currF), 3)]
+        k += 1
 
-#for k in range(length):
-k = 0
-for c in chosenSlots:
-    #c = random.choice(slotC)
-    (x, y) = c
-    #slotC.remove(c)
-    currF = ''
-    for i in range(x, x + nSlots):
-        currF += getLastBits(a[i][y][0], 8, 4) + getLastBits(a[i][y][1], 8, 4)
-        #currF += getLastBits(a[i][y][0], 8, 3) + getLastBits(a[i][y][1], 8, 3) + getLastBits(a[i][y][2], 8, 3)
-    audio[k] = [round(bin_to_float(currF), 3), round(bin_to_float(currF), 3)]
-    k += 1
+    audio = np.asarray(audio, dtype=np.float32)
+    write('temp.wav', 44100, audio)
+    return base64.b64encode(open('temp.wav', 'rb').read()).decode()
 
-audio = np.asarray(audio, dtype=np.float32)
+    #write("decodedAudio.wav", 44100, audio)
 
-write("decodedAudio.wav", 44100, audio)
-
+if __name__ == '__main__':
+    img = open('tempb64', 'r').read()
+    open('tempdecoded', 'w+').write(img_decode_audio(img, 'theway007'))

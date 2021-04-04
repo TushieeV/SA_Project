@@ -263,7 +263,7 @@ class StegDialog extends React.Component {
                                 }
                             </Grid>
                             <Grid item xs={12} className={(this.state.steg2 === "txt") ? classes.textField : null}>
-                                {(this.state.steg2 === "txt") &&
+                                {((this.state.steg2 === "txt") && (this.state.steg1 !== "txt")) &&
                                     <TextField
                                         variant="outlined"
                                         margin="normal"
@@ -277,7 +277,7 @@ class StegDialog extends React.Component {
                                         onChange={(e) => {this.setState({msgEncodedIn: e.target.value})}}
                                     />
                                 }
-                                {(this.state.steg2 === "img") && 
+                                {((this.state.steg2 === "img") && (this.state.steg1 !== "img")) && 
                                     <div>
                                         <Grid
                                             container
@@ -302,7 +302,33 @@ class StegDialog extends React.Component {
                                         </Grid>
                                     </div>
                                 }
-                                {(this.state.steg2 === "audio")}
+                                {((this.state.steg2 === "audio") && (this.state.steg1 !== "audio")) && 
+                                    <div>
+                                        <Grid
+                                            container
+                                            spacing={3}
+                                            direction="column"
+                                            justify="center"
+                                            alignItems="center"
+                                        >
+                                            <input type="file" accept="audio/*" id="stegdialogAudio" ref={this.fileInputAudio} style={{display: "none"}} onChange={(e) => {this.handleFileChange(e, 2)}}/>
+                                            <Grid item xs={12}>
+                                                <audio controls
+                                                    src={`data:audio/wav;base64,${this.state.msgToEncode}`}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <Button 
+                                                    onClick={() => {this.triggerInput("stegdialogAudio")}}
+                                                    color="primary"
+                                                    variant="contained"
+                                                >
+                                                    Upload Audio
+                                                </Button>
+                                            </Grid>    
+                                        </Grid>
+                                    </div>
+                                }
                             </Grid>
                             <Grid item xs={10}>
                                 {(this.state.msgToEncode && this.state.msgEncodedIn) && 
