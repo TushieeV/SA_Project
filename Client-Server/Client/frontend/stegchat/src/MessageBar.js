@@ -6,7 +6,6 @@ import SendSharpIcon from '@material-ui/icons/SendSharp';
 import ImageIcon from '@material-ui/icons/Image';
 import LockIcon from '@material-ui/icons/Lock';
 import StegDialog from "./StegDialog";
-import StegDialog2 from "./StegDialog2";
 
 const fs = require('fs');
 
