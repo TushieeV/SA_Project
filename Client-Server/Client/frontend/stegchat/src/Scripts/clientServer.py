@@ -31,8 +31,8 @@ def get_shared():
 @app.route("/txt-E-img", methods=["POST"])
 def txtEimg():
     req = request.json
-    img = req['img']
-    msg = req['msg']
+    img = req['msgEncodedIn']
+    msg = req['msgToEncode']
     seed = req['seed']
     enc_img = txt_encode_img(msg, img, seed)
     return jsonify({"encoded_image": enc_img})

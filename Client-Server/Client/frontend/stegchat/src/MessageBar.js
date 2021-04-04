@@ -6,6 +6,7 @@ import SendSharpIcon from '@material-ui/icons/SendSharp';
 import ImageIcon from '@material-ui/icons/Image';
 import LockIcon from '@material-ui/icons/Lock';
 import StegDialog from "./StegDialog";
+import StegDialog2 from "./StegDialog2";
 
 const fs = require('fs');
 
@@ -116,7 +117,7 @@ class MessageBar extends React.Component {
                     InputProps={{
                         className: classes.input
                     }}
-                    disabled={this.props.session ? false : true}
+                    disabled={this.props.session ? false : false}
                     onChange={(e) => this.handleMsgChange(e)}
                     onKeyPress={(e) => this.handleKeyPress(e, "text", "None")}
                 />
@@ -124,7 +125,7 @@ class MessageBar extends React.Component {
                     variant="contained"
                     color="primary"
                     className={classes.button}
-                    disabled={this.props.session ? false : true}
+                    disabled={this.props.session ? false : false}
                     onClick={(e) => {this.sendMsg(e, "text", "None")}}
                 >
                     <SendSharpIcon />
@@ -134,7 +135,7 @@ class MessageBar extends React.Component {
                     variant="contained"
                     color="primary"
                     className={classes.button}
-                    disabled={this.props.session ? false : true}
+                    disabled={this.props.session ? false : false}
                     onClick={this.triggerInput}
                 >
                     <ImageIcon />
@@ -143,7 +144,7 @@ class MessageBar extends React.Component {
                     variant="contained"
                     color="primary"
                     className={classes.button}
-                    disabled={this.props.session ? false : true}
+                    disabled={this.props.session ? false : false}
                     onClick={this.openDialog}
                 >
                     <LockIcon />
