@@ -56,6 +56,21 @@ class RequestsSent extends React.Component {
         this.handleDialogClose = this.handleDialogClose.bind(this);
         this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
     }
+    componentDidMount() {
+        this.props.socket.on('request-res', (data) => {
+            if (data.Success) {
+                this.setState({msg: `Successfully sent chat request to ${data.user}`, msgColor: "green", loading: false});
+                var newReqs = [...this.state.sentReqs];
+                newReqs.push({
+                    username: data.user,
+                    req_id: data.req_id
+                });
+                this.setState({sentReqs: newReqs});
+            } else {
+                this.setState({msg: data.Message, msgColor: "red", loading: false});
+            }
+        })
+    }
     componentWillMount() {
         this.checkReqs = setInterval(
             () => this.updateReqs(),
@@ -102,7 +117,7 @@ class RequestsSent extends React.Component {
             }
         } else {
             //fetch(`http://${server_addr}/request?requestor=${this.props.token}&requesting=${this.state.reqUser}`, {method: 'POST'})
-            fetch(`${server_addr}/request?requesting=${this.state.reqUser}`, {
+            /*fetch(`${server_addr}/request?requesting=${this.state.reqUser}`, {
                 method: 'POST',
                 headers: {
                     'token': this.props.token
@@ -122,7 +137,11 @@ class RequestsSent extends React.Component {
                     } else {
                         this.setState({msg: data.Message, msgColor: "red", loading: false});
                     }
-                });
+                });*/
+            this.props.socket.emit('request', {
+                token: this.props.token,
+                requesting: this.state.reqUser
+            });
         }
     }
     handleReqDialogClick() {

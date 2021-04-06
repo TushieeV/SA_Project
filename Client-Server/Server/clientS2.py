@@ -266,7 +266,7 @@ def request_chat(body):
                 req_id = str(uuid.uuid4())
                 execute_query(sql, (req_id, requestor, requesting, 0), None)
                 #return jsonify({"Success": True, "req_id": req_id})
-                emit('request-res', {"Success": True, "req_id": req_id})
+                emit('request-res', {"Success": True, "req_id": req_id, "user": requesting})
                 emit('check-requests', room=user_sids[requesting])
             else:
                 #return jsonify({"Message": "You have already requested to chat with this person."})
