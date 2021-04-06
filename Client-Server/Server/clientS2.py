@@ -238,9 +238,6 @@ def request_chat():
 @socketio.on('request')
 def request_chat(body):
     global user_sids, tok_sids
-    print(user_sids)
-    print(tok_sids)
-    print(body)
     #requestor = request.args.get('requestor')
     requestor = body['token']
     requesting = body['requesting']
@@ -274,15 +271,19 @@ def request_chat(body):
                 #return jsonify({"Success": True, "req_id": req_id})
                 emit('request-res', {"Success": True, "req_id": req_id, "user": body['requesting']})
                 emit('check-requests', room=tok_sids[requesting])
+                return
             else:
                 #return jsonify({"Message": "You have already requested to chat with this person."})
                 emit('request-res', {"Message": "You have already requested to chat with this person."})
+                return
         else:
             #return jsonify({"Message": "This person has already requested to chat with you."})
             emit('request-res', {"Message": "This person has already requested to chat with you."})
+            return
     else:
         #return jsonify({"Message": "User doesn't exist."})
         emit('request-res', {"Message": "User doesn't exist."})
+        return
     #return jsonify({"Message": "Invalid token."})
     emit('request-res', {"Message": "Invalid token."})
 

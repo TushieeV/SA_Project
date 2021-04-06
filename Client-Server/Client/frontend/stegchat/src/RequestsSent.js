@@ -58,6 +58,7 @@ class RequestsSent extends React.Component {
     }
     componentDidMount() {
         this.props.socket.on('request-res', (data) => {
+            console.log(data)
             if (data.Success) {
                 this.setState({msg: `Successfully sent chat request to ${data.user}`, msgColor: "green", loading: false});
                 var newReqs = [...this.state.sentReqs];
