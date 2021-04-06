@@ -106,7 +106,7 @@ class LoginForm extends React.Component {
             const foundToken = this.state.tokens.some(el => el.account === user.username);
             if (foundAccount && !foundToken) {
                 this.props.setUsername(user.username);
-                fetch(`http://${server_addr}/get-token?username=${user.username}`)
+                fetch(`${server_addr}/get-token?username=${user.username}`)
                     .then(response => response.json())
                     .then(data => {
                         this.updateTokens(this.state.username, data.token);
@@ -122,7 +122,7 @@ class LoginForm extends React.Component {
                 keytar.getPassword('stegchat-tokens', user.username)
                     .then(result => {
                         //fetch(`http://${server_addr}/get-token?username=${user.username}&token=${result}`)
-                        fetch(`http://${server_addr}/get-token?username=${user.username}`, {
+                        fetch(`${server_addr}/get-token?username=${user.username}`, {
                            headers: {
                                'token': result
                            } 

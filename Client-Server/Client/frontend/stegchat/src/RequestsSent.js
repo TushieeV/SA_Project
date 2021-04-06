@@ -68,7 +68,7 @@ class RequestsSent extends React.Component {
     updateReqs() {
         this.state.sentReqs.map((obj) => {
             //fetch(`http://${server_addr}/check-request?req_id=${obj.req_id}&token=${this.props.token}`)
-            fetch(`http://${server_addr}/check-request?req_id=${obj.req_id}`, {
+            fetch(`${server_addr}/check-request?req_id=${obj.req_id}`, {
                 headers: {
                     'token': this.props.token
                 }
@@ -102,7 +102,7 @@ class RequestsSent extends React.Component {
             }
         } else {
             //fetch(`http://${server_addr}/request?requestor=${this.props.token}&requesting=${this.state.reqUser}`, {method: 'POST'})
-            fetch(`http://${server_addr}/request?requesting=${this.state.reqUser}`, {
+            fetch(`${server_addr}/request?requesting=${this.state.reqUser}`, {
                 method: 'POST',
                 headers: {
                     'token': this.props.token
