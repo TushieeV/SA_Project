@@ -10,6 +10,7 @@ import { server_addr } from './server_addr';
 import { sendMessageExt } from './sendMessage';
 //import io from "socket.io-client/dist/socket.io"
 import { io } from "socket.io-client";
+import { socket } from './socket'
 
 //const io = require('socket.io');
 
@@ -41,13 +42,15 @@ class Main extends React.Component {
         this.updateMessages = this.updateMessages.bind(this);
         this.setCurr = this.setCurr.bind(this);
 
-        this.socket = io.connect(server_addr, { query: `token=${this.props.token}` })
-
     }
     componentDidMount() {
-        this.socket.on('connected', (data) => {
-            console.log(data);
-        })
+        socket.on('authenticate', () => {
+            const body = {
+                token: this.props.token,
+                username: this.props.username
+            };
+            socket.emit('authenticate', body);
+        });
     }
     componentWillMount() {
         this.checkMsgs = setInterval(
@@ -165,7 +168,7 @@ class Main extends React.Component {
                             addSession={this.addSession} 
                             sessions={this.state.sessions}
                             setCurr={this.setCurr}   
-                            socket={this.socket}
+                            socket={socket}
                         />
                         <MessageBox 
                             messages={this.state.messages}

@@ -24,13 +24,13 @@ class Requests extends React.Component {
                     username={this.props.username}
                     token={this.props.token}
                     addSession={this.props.addSession}
-                    socket={this.socket}
+                    socket={this.props.socket}
                 />
                 <RequestsReceived 
                     username={this.props.username}
                     token={this.props.token}
                     addSession={this.props.addSession}
-                    socket={this.socket}
+                    socket={this.props.socket}
                 />
                 <Chats 
                     sessions={this.props.sessions}

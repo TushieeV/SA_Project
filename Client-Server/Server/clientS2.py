@@ -32,9 +32,13 @@ log = logging.getLogger('werkzeug')
 log.disabled = True
 
 @socketio.on('connect')
-def handle_connect():
-    token = request.args.get('token')
-    username = request.args.get('token')
+def handle_conn():
+    emit('authenticate')
+
+@socketio.on('authenticate')
+def handle_auth(body):
+    token = body['token']
+    username = body['username']
     sql = '''
         SELECT token
         FROM User_Tokens
