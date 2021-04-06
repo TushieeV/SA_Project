@@ -314,7 +314,7 @@ class StegDialog extends React.Component {
                                             <input type="file" accept="audio/*" id="stegdialogAudio" ref={this.fileInputAudio} style={{display: "none"}} onChange={(e) => {this.handleFileChange(e, 2)}}/>
                                             <Grid item xs={12}>
                                                 <audio controls
-                                                    src={`data:audio/wav;base64,${this.state.msgToEncode}`}
+                                                    src={`data:audio/wav;base64,${this.state.msgEncodedIn}`}
                                                 />
                                             </Grid>
                                             <Grid item xs={12}>
@@ -348,7 +348,7 @@ class StegDialog extends React.Component {
                             <Grid>
                                 {(this.state.encoded && (this.state.steg2 === "img")) && <img src={`data:image/png;base64, ${this.state.encoded}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
                                 {(this.state.encoded && (this.state.steg2 === "txt")) && this.state.encoded.replace(/[^ -~]+/g, "")}
-                                {(this.state.encoded && (this.state.steg2 === "audio")) && <audio controls src={`data:image/wav;base64, ${this.state.encoded}`} />}
+                                {(this.state.encoded && (this.state.steg2 === "audio")) && <audio controls src={`data:audio/wav;base64,${this.state.encoded}`} />}
                             </Grid>
                             <Grid item xs={10}>
                                 {this.state.encoded && 

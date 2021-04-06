@@ -38,8 +38,8 @@ def txt_encode_audio(msg, audio, seed):
 
     random.seed(seed)
 
-    f = open('temp.wav', 'rb')
-    f.write(BytesIO(base64.b64decode(audio)))
+    f = open('temp.wav', 'wb')
+    f.write(base64.b64decode(audio))
     f.close()
 
     s, a = read('temp.wav')

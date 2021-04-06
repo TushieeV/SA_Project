@@ -264,7 +264,8 @@ def check_req():
             return jsonify({"Message": "Permission denied."})
     else:
         return jsonify({"Message": "Invalid Request ID."})
-    
+
+@executor.job
 def msg_endpoint(request):
     req = request.json
     
@@ -338,9 +339,12 @@ def msg_endpoint(request):
 
 @app.route("/message", methods=["POST"])
 def rec_msg():
-    executor.submit(msg_endpoint, request)
+    msg_endpoint.submit(msg_endpoint, request)
+    return jsonify({"Success": True})
     
-def get_msgs_endpoint(request):
+
+@app.route("/get-messages", methods=["GET"])
+def get_msgs():
     #ses_id = request.args.get('ses_id')
     ses_id = request.headers.get('ses_id')
     last_msg = int(request.args.get('last_msg'))
@@ -365,10 +369,6 @@ def get_msgs_endpoint(request):
         return jsonify({'messages': msgs[last_msg:]})
     else:
         return jsonify({"Message": "No messages yet."})
-
-@app.route("/get-messages", methods=["GET"])
-def get_msgs():
-    executor.submit(get_msgs_endpoint, request)
 
 def setup():
     try:
