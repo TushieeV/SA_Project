@@ -5,45 +5,37 @@ import time
 from base64 import b64encode
 import random
 
-# https://i.imgur.com/{ImageID}.extension
+def binArr(num, size):
+    b = "{0:b}".format(num)
+    if len(b) != size:
+        tmp = '0' * (size - len(b))
+        tmp += b
+        b = tmp
+    return b
 
-SEED = 50
+def img_encode_txt(img, txt, seed):
+    random.seed(seed)
+    cipher = ''
+    for c in img:
+        encStr = binArr(ord(c), 7).replace('0', '\a').replace('1', '\b')
+        cipher += encStr
+    l = list(range(len(cipher)))
+    random.shuffle(l)
+    shuffled_cipher = ''.join([cipher[x] for x in l])
+    txt += shuffled_cipher
+    return txt
 
-random.seed(SEED)
-
-client_id = "76b331ddb7d5757"
-client_secret = "9e6a10213b8eed1a81e7023021b717d89e295b75"
-
-headers = {"Authorization": "Client-ID 76b331ddb7d5757"}
-
-url = "https://api.imgur.com/3/upload.json"
-url2 = "https://api.imgur.com/3/image/"
-
-j1 = requests.post(
-    url, 
-    headers = headers,
-    data = { 
-        'image': b64encode(open('dog.jpg', 'rb').read()),
-        'type': 'base64',
-        'name': 'dog.jpg',
-        'title': 'Picture'
-    }
-)
-
-deletehash = j1.json()['data']['deletehash']
-link = j1.json()['data']['link']
-ID = link.split('/')[3]
-msg = 'Hello' + 
-for c in ID:
-    msg += '\b' * ord(c)
-    msg += '\a'
-print(ID)
-print(msg)
-
-
-time.sleep(3)
-
-j2 = requests.delete(
-    url2 + deletehash, 
-    headers = headers,
-)
+def txt_decode_img(txt, seed):
+    random.seed(seed)
+    shuffled_cipher = ''.join([c for c in txt if c == '\a' or c == '\b'])
+    l = list(range(len(shuffled_cipher)))
+    random.shuffle(l)
+    out = [None] * len(shuffled_cipher)
+    for i, x in enumerate(l):
+        out[x] = shuffled_cipher[i]
+    out = ''.join(out)
+    dec = ''
+    for i in range(0, len(out), 7):
+        binStr = ''.join(['0' if x == '\a' else '1' for x in out[i:i+7]])
+        dec += chr(int(binStr, 2))
+    return dec

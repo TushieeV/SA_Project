@@ -30,6 +30,20 @@ class App extends React.Component {
     this.setDh = this.setDh.bind(this);
     this.signOut = this.signOut.bind(this);
     this.deactivate = this.deactivate.bind(this);
+
+    // Uncomment below to clear all account and token data
+    /*keytar.findCredentials('stegchat').then(res => {
+      res.map(obj => {
+        keytar.deletePassword('stegchat', obj.account)
+      })
+    })
+
+    keytar.findCredentials('stegchat-tokens').then(res => {
+      res.map(obj => {
+        keytar.deletePassword('stegchat-tokens', obj.account)
+      })
+    })*/
+  
   }
   setToken(val) {
     this.setState({token: val});

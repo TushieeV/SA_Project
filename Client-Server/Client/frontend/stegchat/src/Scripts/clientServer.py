@@ -5,6 +5,8 @@ from encrypt_decrypt import encrypt, decrypt
 from txtEImg import txt_encode_img
 from imgDTxt import img_decode_txt
 from audioEImg import wav_encode_img
+from imgETxt import img_encode_txt, txt_decode_img
+from imgDAudio import img_decode_audio
 import logging
 
 app = Flask(__name__)
@@ -36,7 +38,16 @@ def txtEimg():
     msg = req['msgToEncode']
     seed = req['seed']
     enc_img = txt_encode_img(msg, img, seed)
-    return jsonify({"encoded_image": enc_img})
+    return jsonify({"encoded": enc_img})
+
+@app.route("/img-E-txt", methods=["POST"])
+def imgEtxt():
+    req = request.json
+    img = req['msgToEncode']
+    msg = req['msgEncodedIn']
+    seed = req['seed']
+    enc_txt = img_encode_txt(img, msg, seed)
+    return jsonify({"encoded": enc_txt})
 
 @app.route("/audio-E-img", methods=["POST"])
 def audioEimg():
@@ -45,7 +56,7 @@ def audioEimg():
     img = req['msgEncodedIn']
     seed = req['seed']
     enc_img = wav_encode_img(audio, img, seed)
-    return jsonify({"encoded_image": enc_img})
+    return jsonify({"encoded": enc_img})
 
 @app.route("/img-D-txt", methods=["POST"])
 def imgDtxt():
@@ -53,7 +64,23 @@ def imgDtxt():
     img = req['img']
     seed = req['seed']
     msg = img_decode_txt(img, seed)
-    return jsonify({"hidden_message": msg})
+    return jsonify({"hidden": msg})
+
+@app.route("/img-D-audio", methods=["POST"])
+def imgDaudio():
+    req = request.json
+    img = req['img']
+    seed = req['seed']
+    audio = img_decode_audio(img, seed)
+    return jsonify({"hidden": audio})
+
+@app.route("/txt-D-img", methods=["POST"])
+def txtDimg():
+    req = request.json
+    msg = req['msg']
+    seed = req['seed']
+    img = txt_decode_img(msg, seed)
+    return jsonify({"hidden": img})
 
 @app.route("/encrypt", methods=["POST"])
 def encrypt_msg():

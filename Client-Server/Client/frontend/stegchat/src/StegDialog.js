@@ -102,8 +102,8 @@ class StegDialog extends React.Component {
         })
             .then(response => response.json())
             .then(data => {
-                this.setState({encoded: data.encoded_image, loading: false});
-                console.log(data.encoded_image.length);
+                this.setState({encoded: data.encoded, loading: false});
+                console.log(data.encoded.length);
             });
     }
     handleSendClick() {
@@ -115,7 +115,7 @@ class StegDialog extends React.Component {
         } else if (this.state.steg === "imgEtxt" || this.state.steg === "audioEtxt") {
             type = "text";
         } else if (this.state.steg === "txtEaudio" || this.state.steg === "imgEaudio") {
-            type = "audio";
+            type = "audio/wav";
         }
         this.setState({
             steg: "txtEimg",

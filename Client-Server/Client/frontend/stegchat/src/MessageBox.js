@@ -118,8 +118,8 @@ class MessageBox extends React.Component {
             })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.hidden_message) {
-                        this.setState({decoded: data.hidden_message, decodedType: "text", loading: false});
+                    if (data.hidden) {
+                        this.setState({decoded: data.hidden, decodedType: "text", loading: false});
                     }
                 });
         } else if (this.state.steg === "imgEtxt") {
@@ -130,14 +130,14 @@ class MessageBox extends React.Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    txt: this.state.message,
+                    msg: this.state.message,
                     seed: this.state.encpwd
                 })
             })
             .then(res => res.json())
             .then(data => {
-                if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "image", loading: false});
+                if (data.hidden) {
+                    this.setState({decoded: data.hidden, decodedType: "image", loading: false});
                 }
             });
         } else if (this.state.steg === "txtEaudio") {
@@ -154,8 +154,8 @@ class MessageBox extends React.Component {
             })
             .then(res => res.json())
             .then(data => {
-                if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "text", loading: false});
+                if (data.hidden) {
+                    this.setState({decoded: data.hidden, decodedType: "text", loading: false});
                 }
             });
         } else if (this.state.steg === "imgEaudio") {
@@ -172,8 +172,8 @@ class MessageBox extends React.Component {
             })
             .then(res => res.json())
             .then(data => {
-                if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "image", loading: false});
+                if (data.hidden) {
+                    this.setState({decoded: data.hidden, decodedType: "image", loading: false});
                 }
             });
         } else if (this.state.steg === "audioEimg") {
@@ -190,8 +190,8 @@ class MessageBox extends React.Component {
             })
             .then(res => res.json())
             .then(data => {
-                if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "audio", loading: false});
+                if (data.hidden) {
+                    this.setState({decoded: data.hidden, decodedType: "audio/wav", loading: false});
                 }
             });
         } else if (this.state.steg === "audioEtxt") {
@@ -208,8 +208,8 @@ class MessageBox extends React.Component {
             })
             .then(res => res.json())
             .then(data => {
-                if (data.hidden_message) {
-                    this.setState({decoded: data.hidden_message, decodedType: "audio", loading: false});
+                if (data.hidden) {
+                    this.setState({decoded: data.hidden, decodedType: "audio/wav", loading: false});
                 }
             });
         }
@@ -227,6 +227,7 @@ class MessageBox extends React.Component {
                     <div key={i++} className={(obj.direction === 'left') ? classes.leftMsg : classes.rightMsg}>
                         {(obj.type === "text") && obj.message}
                         {(obj.type === "image") && <img src={`data:image/png;base64, ${obj.message}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
+                        {(obj.type.split('/')[0] === 'audio') && <audio controls src={`data:${obj.type};base64, ${obj.message}`} />}
                         {!(obj.steg === "None") && 
                             <IconButton
                                 variant="contained"
@@ -289,6 +290,7 @@ class MessageBox extends React.Component {
                                 <Grid>
                                     {(this.state.decodedType === "text") && this.state.decoded}
                                     {(this.state.decodedType === "image") && <img src={`data:image/png;base64, ${this.state.decoded}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
+                                    {(this.state.decodedType == "audio/wav") && <audio controls src={`data:audio/wav;base64, ${this.state.decoded}`} />}
                                 </Grid>
                             </Grid>
                         </div>
