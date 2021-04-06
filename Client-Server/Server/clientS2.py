@@ -33,10 +33,12 @@ log.disabled = True
 
 @socketio.on('connect')
 def handle_conn():
-    emit('authenticate')
+    print('Connected')
+    #emit('authenticate')
 
 @socketio.on('authenticate')
 def handle_auth(body):
+    global user_sids, tok_sids
     token = body['token']
     username = body['username']
     sql = '''
@@ -235,6 +237,10 @@ def request_chat():
 
 @socketio.on('request')
 def request_chat(body):
+    global user_sids, tok_sids
+    print(user_sids)
+    print(tok_sids)
+    print(body)
     #requestor = request.args.get('requestor')
     requestor = body['token']
     requesting = body['requesting']
@@ -266,8 +272,8 @@ def request_chat(body):
                 req_id = str(uuid.uuid4())
                 execute_query(sql, (req_id, requestor, requesting, 0), None)
                 #return jsonify({"Success": True, "req_id": req_id})
-                emit('request-res', {"Success": True, "req_id": req_id, "user": requesting})
-                emit('check-requests', room=user_sids[requesting])
+                emit('request-res', {"Success": True, "req_id": req_id, "user": body['requesting']})
+                emit('check-requests', room=tok_sids[requesting])
             else:
                 #return jsonify({"Message": "You have already requested to chat with this person."})
                 emit('request-res', {"Message": "You have already requested to chat with this person."})

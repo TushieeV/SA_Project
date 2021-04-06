@@ -44,13 +44,11 @@ class Main extends React.Component {
 
     }
     componentDidMount() {
-        socket.on('authenticate', () => {
-            const body = {
-                token: this.props.token,
-                username: this.props.username
-            };
-            socket.emit('authenticate', body);
-        });
+        const body = {
+            token: this.props.token,
+            username: this.props.username
+        };
+        socket.emit('authenticate', body);
     }
     componentWillMount() {
         this.checkMsgs = setInterval(

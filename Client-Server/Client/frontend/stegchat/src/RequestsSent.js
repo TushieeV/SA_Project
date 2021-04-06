@@ -72,13 +72,13 @@ class RequestsSent extends React.Component {
         })
     }
     componentWillMount() {
-        this.checkReqs = setInterval(
-            () => this.updateReqs(),
-            5000
-        );
+        //this.checkReqs = setInterval(
+        //    () => this.updateReqs(),
+        //    5000
+        //);
     }
     componentWillUnmount() {
-        clearInterval(this.checkReqs);
+        //clearInterval(this.checkReqs);
     }
     updateReqs() {
         this.state.sentReqs.map((obj) => {
