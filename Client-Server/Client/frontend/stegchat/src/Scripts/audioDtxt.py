@@ -4,9 +4,8 @@ import struct
 import random
 from PIL import Image
 import math
-
-SEED = 'feafaewoijf'
-MSG_MAX = 2500
+from io import BytesIO
+import base64
 
 def binArr(num, size):
     b = "{0:b}".format(num)
@@ -35,32 +34,37 @@ def float_to_bin(num):
 def bin_to_float(binary):
     return struct.unpack('!f',struct.pack('!I', int(binary, 2)))[0]
 
-random.seed(SEED)
+def audio_decode_txt(audio, seed):
+    random.seed(seed)
 
-s, a = read('encodedTextAudio.wav')
+    f = open('temp.wav', 'rb')
+    f.write(BytesIO(base64.b64decode(audio)))
+    f.close()
 
-xs = [x for x in range(len(a))]
-lngth = len(xs) - 1
+    s, a = read('temp.wav')
 
-b = ''
-for _ in range(14):
-    idx = random.randint(min(xs), lngth)
-    b += float_to_bin(a[idx][0])[-1]
-    lngth -= 1
-    xs.remove(idx)
+    xs = [x for x in range(len(a))]
+    lngth = len(xs) - 1
 
-msg_len = int(b, 2)
-if msg_len > 10000:
-    msg_len = random.randint(0, 10000)
-msg = ''
-
-for _ in range(msg_len):
     b = ''
-    for _ in range(7):
+    for _ in range(14):
         idx = random.randint(min(xs), lngth)
         b += float_to_bin(a[idx][0])[-1]
         lngth -= 1
         xs.remove(idx)
-    msg += chr(int(b, 2))
 
-print(msg[0:-1])
+    msg_len = int(b, 2)
+    if msg_len > 10000:
+        msg_len = random.randint(0, 10000)
+    msg = ''
+
+    for _ in range(msg_len):
+        b = ''
+        for _ in range(7):
+            idx = random.randint(min(xs), lngth)
+            b += float_to_bin(a[idx][0])[-1]
+            lngth -= 1
+            xs.remove(idx)
+        msg += chr(int(b, 2))
+
+    return msg[0:-1]

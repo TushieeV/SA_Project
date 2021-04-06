@@ -4,6 +4,8 @@ import struct
 import random
 from PIL import Image
 import math
+from io import BytesIO
+import base64
 
 def binArr(num, size):
     b = "{0:b}".format(num)
@@ -36,9 +38,12 @@ def txt_encode_audio(msg, audio, seed):
 
     random.seed(seed)
 
-    s, a = read('output.wav')
+    f = open('temp.wav', 'rb')
+    f.write(BytesIO(base64.b64decode(audio)))
+    f.close()
 
-    count = 0
+    s, a = read('temp.wav')
+
     msgNum = np.array([ord(c) for c in msg])
 
     xs = [x for x in range(len(a))]
@@ -61,6 +66,11 @@ def txt_encode_audio(msg, audio, seed):
             xs.remove(idx)
             lngth -= 1
 
-    write('encodedTextAudio.wav', 44100, a)
+    write('temp.wav', 44100, a)
+    
+    f = open('temp.wav', 'rb')
+    b64 = base64.b64encode(f.read()).decode()
+    f.close()
+    return b64
 
     

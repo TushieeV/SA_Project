@@ -265,9 +265,7 @@ def check_req():
     else:
         return jsonify({"Message": "Invalid Request ID."})
     
-@app.route("/message", methods=["POST"])
-def rec_msg():
-    
+def msg_endpoint(request):
     req = request.json
     
     msg = req['msg']
@@ -338,8 +336,11 @@ def rec_msg():
     else:
         return jsonify({"Message": "User doesn't exist."})
 
-@app.route("/get-messages", methods=["GET"])
-def get_msgs():
+@app.route("/message", methods=["POST"])
+def rec_msg():
+    executor.submit(msg_endpoint, request)
+    
+def get_msgs_endpoint(request):
     #ses_id = request.args.get('ses_id')
     ses_id = request.headers.get('ses_id')
     last_msg = int(request.args.get('last_msg'))
@@ -364,6 +365,10 @@ def get_msgs():
         return jsonify({'messages': msgs[last_msg:]})
     else:
         return jsonify({"Message": "No messages yet."})
+
+@app.route("/get-messages", methods=["GET"])
+def get_msgs():
+    executor.submit(get_msgs_endpoint, request)
 
 def setup():
     try:
