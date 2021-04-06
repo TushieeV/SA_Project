@@ -8,6 +8,10 @@ import Requests from './Requests';
 import { encrypt, decrypt } from "./encrypt_decrypt";
 import { server_addr } from './server_addr';
 import { sendMessageExt } from './sendMessage';
+//import io from "socket.io-client/dist/socket.io"
+import { io } from "socket.io-client";
+
+//const io = require('socket.io');
 
 const useStyles = theme => ({
     flexBoxRow: {
@@ -29,13 +33,21 @@ class Main extends React.Component {
             sessions: [],
             currSession: null,
             messages: [],
-            sending: false
+            sending: false,
         };
         this.render = this.render.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.addSession = this.addSession.bind(this);
         this.updateMessages = this.updateMessages.bind(this);
         this.setCurr = this.setCurr.bind(this);
+
+        this.socket = io.connect(server_addr, { query: `token=${this.props.token}` })
+
+    }
+    componentDidMount() {
+        this.socket.on('connected', (data) => {
+            console.log(data);
+        })
     }
     componentWillMount() {
         this.checkMsgs = setInterval(
@@ -153,6 +165,7 @@ class Main extends React.Component {
                             addSession={this.addSession} 
                             sessions={this.state.sessions}
                             setCurr={this.setCurr}   
+                            socket={this.socket}
                         />
                         <MessageBox 
                             messages={this.state.messages}

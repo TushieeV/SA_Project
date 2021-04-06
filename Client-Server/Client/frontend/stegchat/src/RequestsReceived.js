@@ -55,14 +55,17 @@ class RequestsReceived extends React.Component {
         this.acceptReq = this.acceptReq.bind(this);
         this.rejectReq = this.rejectReq.bind(this);
     }
+    componentDidMount() {
+        this.props.socket.on('check-requests', this.updateReqs) 
+    }
     componentWillMount() {
-        this.checkReqs = setInterval(
-            () => this.updateReqs(),
-            5000
-        );
+        //this.checkReqs = setInterval(
+        //    () => this.updateReqs(),
+        //    5000
+        //);
     }
     componentWillUnmount() {
-        clearInterval(this.checkReqs);
+        //clearInterval(this.checkReqs);
     }
     updateReqs() {
         //fetch(`http://${server_addr}/my-requests?token=${this.props.token}`)

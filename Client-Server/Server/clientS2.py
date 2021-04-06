@@ -7,6 +7,11 @@ import json
 from setupDb import db_setup, execute_query
 import logging
 from flask_executor import Executor
+from flask_socketio import SocketIO
+from flask_socketio import send, emit
+
+tok_sids = {}
+user_sids = {}
 
 '''
 TODO:
@@ -22,8 +27,26 @@ Ideas:
 app = Flask(__name__)
 cors = CORS(app)
 executor = Executor(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 log = logging.getLogger('werkzeug')
 log.disabled = True
+
+@socketio.on('connect')
+def handle_connect():
+    token = request.args.get('token')
+    username = request.args.get('token')
+    sql = '''
+        SELECT token
+        FROM User_Tokens
+        WHERE token = ?
+    '''
+    res = execute_query(sql, (token,), 'one')
+    if res is not None:
+        user_sids[username] = request.sid
+        tok_sids[token] = request.sid
+        emit('connected', True)
+    else:
+        emit('connected', False)
 
 """
 Parameters:
@@ -163,6 +186,7 @@ def get_chat_requests():
     else:
         return jsonify({"Message": "No chat requests so far."})
 
+"""
 @app.route("/request", methods=["POST"])
 def request_chat():
     #requestor = request.args.get('requestor')
@@ -203,6 +227,54 @@ def request_chat():
     else:
         return jsonify({"Message": "User doesn't exist."})
     return jsonify({"Message": "Invalid token."})
+"""
+
+@socketio.on('request')
+def request_chat(body):
+    #requestor = request.args.get('requestor')
+    requestor = body['token']
+    requesting = body['requesting']
+    sql = '''
+        SELECT token
+        FROM User_Tokens
+        WHERE username = ?
+    '''
+    res = execute_query(sql, (requesting,), 'one')
+    if res is not None:
+        requesting = res[0]
+        sql = '''
+            SELECT req_id
+            FROM Requests
+            WHERE (requestor = ? AND requesting = ?)
+        '''
+        res = execute_query(sql, (requesting, requestor), 'one')
+        if res is None:
+            sql = '''
+                SELECT req_id
+                FROM Requests
+                WHERE (requestor = ? AND requesting = ?)
+            '''
+            res = execute_query(sql, (requestor, requesting), 'one')
+            if res is None:
+                sql = '''
+                    INSERT INTO Requests VALUES(?,?,?,?)
+                '''
+                req_id = str(uuid.uuid4())
+                execute_query(sql, (req_id, requestor, requesting, 0), None)
+                #return jsonify({"Success": True, "req_id": req_id})
+                emit('request-res', {"Success": True, "req_id": req_id})
+                emit('check-requests', room=user_sids[requesting])
+            else:
+                #return jsonify({"Message": "You have already requested to chat with this person."})
+                emit('request-res', {"Message": "You have already requested to chat with this person."})
+        else:
+            #return jsonify({"Message": "This person has already requested to chat with you."})
+            emit('request-res', {"Message": "This person has already requested to chat with you."})
+    else:
+        #return jsonify({"Message": "User doesn't exist."})
+        emit('request-res', {"Message": "User doesn't exist."})
+    #return jsonify({"Message": "Invalid token."})
+    emit('request-res', {"Message": "Invalid token."})
 
 @app.route("/accept-request", methods=["POST"])
 def accept_request():
@@ -384,4 +456,5 @@ if __name__ == '__main__':
     except:
         db_setup()
 
-    app.run(host='0.0.0.0', port='5000')
+    #app.run(host='0.0.0.0', port='5000')
+    socketio.run(app, host='0.0.0.0', port=5000)
