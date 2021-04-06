@@ -5,6 +5,7 @@ export function sendMessageExt(e, message, type, steg, key, sender, receiver, se
     if (e) {
         e.preventDefault();
     }
+
     const enc_msg = encrypt(message, key);
     //fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&sender=${sender}&receiver=${receiver}&ses_id=${ses_id}&type=${type}&steg=${steg}`, {method: "POST"})
     //fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&receiver=${receiver}&type=${type}&steg=${steg}`, {
@@ -24,7 +25,10 @@ export function sendMessageExt(e, message, type, steg, key, sender, receiver, se
     })
         .then(res => res.json())
         .then(data => {
-            if (data.date) {
+            if (data.message) {
+                console.log(data)
+            }
+            /*if (data.date) {
                 async function fetchUntilDone() {
                     let response = await fetch(`${server_addr}/message?date=${encodeURIComponent(data.date)}`);
                     if (!response.done) {
@@ -32,6 +36,6 @@ export function sendMessageExt(e, message, type, steg, key, sender, receiver, se
                     }
                 }
                 fetchUntilDone();
-            }
+            }*/
         });
 }
