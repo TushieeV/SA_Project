@@ -369,6 +369,13 @@ def get_msgs():
     else:
         return jsonify({"Message": "No messages yet."})
 
+def setup():
+    try:
+        f = open('StegChatDB.db')
+        f.close()
+    except:
+        db_setup()  
+
 if __name__ == '__main__':
 
     try:
