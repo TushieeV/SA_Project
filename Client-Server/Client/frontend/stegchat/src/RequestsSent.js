@@ -110,6 +110,7 @@ class RequestsSent extends React.Component {
                 newSentReqs.splice(this.state.sentReqs.indexOf(obj));
                 this.setState({sentReqs: newSentReqs});
                 this.props.addSession(obj.username, data.ses_id);
+                return;
             }
         });
     }

@@ -59,7 +59,9 @@ class RequestsReceived extends React.Component {
     }
     componentDidMount() {
         this.props.socket.on('check-requests', () => {
-            this.props.socket.emit('my-requests');
+            this.props.socket.emit('my-requests', {
+                token: this.props.token
+            });
         })
         this.props.socket.on('res-accept-request', (data) => {
             console.log(data)
