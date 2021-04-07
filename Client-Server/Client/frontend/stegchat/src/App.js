@@ -46,6 +46,14 @@ class App extends React.Component {
     })*/
   
   }
+  componentDidMount() {
+    socket.on('res-my-pkey', (data) => {
+      console.log(data);
+      if (data.Success) {
+        this.setState({pkeyPosted: true});
+      }
+    });
+  }
   setToken(val) {
     this.setState({token: val});
   }
@@ -69,7 +77,7 @@ class App extends React.Component {
     this.signOut();
   }
   componentDidUpdate() {
-    if (!this.state.pkeyPosted && this.state.dh) {
+    if (!this.state.pkeyPosted && this.state.dh && this.state.token) {
       //fetch(`http://${server_addr}/my-pkey?token=${this.state.token}&pkey=${this.state.dh.public_key}`, {method: 'post'})
       /*fetch(`${server_addr}/my-pkey`, {
         method: 'post',

@@ -72,7 +72,8 @@ Conditions:
 def get_token(body):
     username = body['username']
     #tok = request.args.get('token')
-    tok = body['token']
+    tok = None
+    if 'token' in body: tok = body['token']
     sql = '''
         SELECT username, token
         FROM User_Tokens
@@ -85,6 +86,7 @@ def get_token(body):
             INSERT INTO User_Tokens VALUES(?,?)
         '''
         execute_query(sql, (token, username), None)
+        socketio.sleep(1)
         emit('res-get-token', {'token': token})
         return
     else:
@@ -97,6 +99,7 @@ def get_token(body):
                 WHERE username = ?
             '''
             execute_query(sql, (new_token, username), None)
+            socketio.sleep(1)
             emit('res-get-token', {'token': new_token})
             return
         elif token == '':
@@ -159,19 +162,26 @@ def get_pkey(body):
 
 #@app.route("/my-pkey", methods=["POST"])
 @socketio.on('my-pkey')
-def store_my_pkey():
-    req = request.json
+def store_my_pkey(body):
     #token = request.args.get('token')
-    token = request.headers.get('token')
+    token = body['token']
+    sql = '''
+        SELECT token
+        FROM Public_Keys
+        WHERE token = ?
+    '''
+    res = execute_query(sql, (token,), 'one')
+    if res is not None:
+        return
     sql = '''
         SELECT username
         FROM User_Tokens
         WHERE token = ?
     '''
     res = execute_query(sql, (token,), 'one')
-    if res is not None:
+    if res is not None and token is not None:
         #pkey = request.args.get('pkey')
-        pkey = req['pkey']
+        pkey = body['pkey']
         sql = '''
             INSERT INTO Public_Keys VALUES(?,?)
         '''

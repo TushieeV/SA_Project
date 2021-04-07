@@ -57,6 +57,7 @@ class LoginForm extends React.Component {
     }
     componentDidMount() {
         this.props.socket.on('res-get-token', (data) => {
+            console.log(data);
             if (data.token) {
                 this.props.setTok(data.token);
             }
@@ -113,12 +114,15 @@ class LoginForm extends React.Component {
             const foundToken = this.state.tokens.some(el => el.account === user.username);
             if (foundAccount && !foundToken) {
                 this.props.setUsername(user.username);
-                fetch(`${server_addr}/get-token?username=${user.username}`)
+                /*fetch(`${server_addr}/get-token?username=${user.username}`)
                     .then(response => response.json())
                     .then(data => {
                         this.updateTokens(this.state.username, data.token);
                         this.props.setTok(data.token);
-                    });
+                    });*/
+                this.props.socket.emit('get-token', {
+                    username: user.username
+                });
                 fetch(`http://127.0.0.1:6001/get-dh`)
                     .then(response => response.json())
                     .then(data => {

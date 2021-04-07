@@ -79,7 +79,7 @@ class Main extends React.Component {
             } else {
                 this.updateMessages(data);
             }
-        })
+        });
     }
     handleMsgCheck(data) {
         if (data.ses_id) {
