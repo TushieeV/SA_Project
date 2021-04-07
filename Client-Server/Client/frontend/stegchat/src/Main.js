@@ -52,14 +52,16 @@ class Main extends React.Component {
         this.props.socket.on('res-start-message', (data) => {
             this.props.socket.emit('check-start-message', {
                 task_id: data.task_id,
-                receiver: data.receiver
+                receiver: data.receiver,
+                ses_id: data.ses_id
             });
         });
         this.props.socket.on('res-check-start-message', (data) => {
             if (!data.done) {
                 this.props.socket.emit('check-start-message', {
                     task_id: data.task_id,
-                    receiver: data.receiver
+                    receiver: data.receiver,
+                    ses_id: data.ses_id
                 });
             }
         });
