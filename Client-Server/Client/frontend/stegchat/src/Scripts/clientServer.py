@@ -60,6 +60,15 @@ def imgEtxt():
     enc_txt = img_encode_txt(img, msg, seed)
     return jsonify({"encoded": enc_txt})
 
+@app.route("audio-E-txt", methods=["POST"])
+def audioEtxt():
+    req = request.json
+    audio = req['msgToEncode']
+    msg = req['msgEncodedIn']
+    seed = req['seed']
+    enc_txt = img_encode_txt(audio, msg, seed)
+    return jsonify({"encoded": enc_txt})
+
 @app.route("/audio-E-img", methods=["POST"])
 def audioEimg():
     req = request.json
@@ -92,6 +101,14 @@ def txtDimg():
     seed = req['seed']
     img = txt_decode_img(msg, seed)
     return jsonify({"hidden": img})
+
+@app.route("/txt-D-audio")
+def txtDaudio():
+    req = request.json
+    msg = req['msg']
+    seed = req['seed']
+    audio = txt_decode_img(msg, seed)
+    return jsonify({"hidden": audio})
 
 @app.route("/audio-D-txt", methods=["POST"])
 def audioDtxt():

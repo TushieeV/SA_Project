@@ -13,6 +13,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Mic from './Mic'
 
 const fs = require('fs');
 
@@ -191,6 +192,7 @@ class StegDialog extends React.Component {
                                     <MenuItem value="txtEaudio">Encode text within audio</MenuItem>
                                     <MenuItem value="imgEtxt">Encode image within text</MenuItem>
                                     <MenuItem value="imgEaudio">Encode image within audio</MenuItem>
+                                    <MenuItem value="audioEtxt">Encode audio within text</MenuItem>
                                     <MenuItem value="audioEimg">Encode audio within image</MenuItem>
                                 </Select>
                             </Grid>
@@ -249,6 +251,13 @@ class StegDialog extends React.Component {
                                                     src={`data:audio/wav;base64,${this.state.msgToEncode}`}
                                                 />
                                             </Grid>
+                                            {(this.state.steg2 === "text") && 
+                                                <Grid item xs={12}>
+                                                    <Mic setAudio={(b64) => {
+                                                        this.setState({msgToEncode: b64})
+                                                    }}/>
+                                                </Grid>
+                                            }
                                             <Grid item xs={12}>
                                                 <Button 
                                                     onClick={() => {this.triggerInput("stegdialogAudio")}}

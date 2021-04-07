@@ -10,8 +10,10 @@ export default class Mic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      record: false
+      record: false,
+      audio: null
     }
+    this.onStop = this.onStop.bind(this);
   }
 
   startRecording = () => {
@@ -30,12 +32,19 @@ export default class Mic extends React.Component {
     console.log('recordedBlob is: ', recordedBlob);
     var reader = new FileReader();
     reader.readAsDataURL(recordedBlob.blob);
-    reader.onloadend = function () {
-        var base64string = reader.result;
-        this.props.setAudio(base64string);
+      
+    recordedBlob.blob.arrayBuffer().then(res => {
+      var buffer = Buffer.from(res);
+      this.props.setAudio(buffer.toString('base64'));
+    })
+
+    //reader.onloadend = function () {
+    //    var base64string = reader.result;
+        
+        //this.props.setAudio(base64string);
         //console.log(base64string);
         //console.log(base64string.length);
-    }
+    //}
     /*recordedBlob.blob.arrayBuffer().then(res => {
       fs.writeFileSync('test.wav', Buffer(new Uint8Array(res)));
       console.log(res);

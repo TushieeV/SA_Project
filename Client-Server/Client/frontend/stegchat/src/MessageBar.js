@@ -60,6 +60,7 @@ class MessageBar extends React.Component {
         this.sendM = this.sendM.bind(this);
         this.handleMsgChange = this.handleMsgChange.bind(this);
         this.openDialog = this.openDialog.bind(this);
+        this.setAudio = this.setAudio.bind(this);
     }
     sendM(e, msg, type, steg) {
         //this.setState({message: msg}, () => {this.sendMsg(e, type, steg)});
