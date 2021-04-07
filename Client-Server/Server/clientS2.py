@@ -145,7 +145,7 @@ def get_pkey(body):
                     WHERE token = ?
                 '''
                 pkey = execute_query(sql, (target,), 'one')[0]
-                emit('res-get-pkey', {"pkey": pkey})
+                emit('res-get-pkey', {"pkey": pkey, "target": body['target'], "ses_id": body['ses_id']})
                 return
             else:
                emit('res-get-pkey', {"Message": "Permission denied."})

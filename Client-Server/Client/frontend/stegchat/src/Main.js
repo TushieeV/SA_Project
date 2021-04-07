@@ -89,7 +89,7 @@ class Main extends React.Component {
                         ses_id: data.ses_id,
                         last_msg: obj.messages.length
                     });
-                    break;
+                    return;
                 }
             })
         }
@@ -113,7 +113,7 @@ class Main extends React.Component {
                 const obj = this.state.sessions[i];
                 if (this.state.currSession && obj.ses_id === this.state.currSession.ses_id) {
                     this.setState({messages: obj.messages});
-                    break;
+                    return;
                 }
             }
         });
@@ -164,7 +164,7 @@ class Main extends React.Component {
                     }
                 }));
                 this.setState({message: newObj.messages});
-                newSessions = [...this.state.sessions];
+                var newSessions = [...this.state.sessions];
                 newSessions[this.state.sessions.indexOf(obj)] = newObj;
                 this.setState({sessions: newSessions});
             }
@@ -199,7 +199,7 @@ class Main extends React.Component {
                 }
             });*/
         this.props.socket.emit('get-pkey', {
-            ses_id = sid,
+            ses_id: sid,
             target: user
         });
     }
@@ -211,8 +211,8 @@ class Main extends React.Component {
                     if (data2.shared) {
                         var newSessions = [...this.state.sessions];
                         newSessions.push({
-                            username: user,
-                            ses_id: sid,
+                            username: data.target,
+                            ses_id: data.ses_id,
                             messages: [],
                             key: data2.shared
                         });
