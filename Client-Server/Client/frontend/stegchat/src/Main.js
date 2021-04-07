@@ -49,14 +49,16 @@ class Main extends React.Component {
         this.props.socket.on('res-get-pkey', (data) => {
             this.handleGetPkey(data);
         });
-        this.props.socket.on('res-start-message', (data) => {
+        /*this.props.socket.on('res-start-message', (data) => {
+            console.log(data);
             this.props.socket.emit('check-start-message', {
                 task_id: data.task_id,
                 receiver: data.receiver,
                 ses_id: data.ses_id
             });
-        });
-        this.props.socket.on('res-check-start-message', (data) => {
+        });*/
+        /*this.props.socket.on('res-check-start-message', (data) => {
+            console.log(data);
             if (!data.done) {
                 this.props.socket.emit('check-start-message', {
                     task_id: data.task_id,
@@ -64,11 +66,19 @@ class Main extends React.Component {
                     ses_id: data.ses_id
                 });
             }
-        });
+        });*/
         this.props.socket.on('check-messages', (data) => {
-            this.handleMsgCheck(data);
+            console.log(data);
+            this.props.socket.emit('get-messages', {
+                ses_id: data.ses_id
+            });
         });
         this.props.socket.on('res-get-messages', (data) => {
+            console.log(data);
+            this.updateMessages(data);
+        })
+        /*this.props.socket.on('res-get-messages', (data) => {
+            console.log(data);
             this.props.socket.emit('check-messages', {
                 task_id: data.task_id
             });
@@ -82,7 +92,7 @@ class Main extends React.Component {
             } else {
                 this.updateMessages(data);
             }
-        });
+        });*/
     }
     handleMsgCheck(data) {
         if (data.ses_id) {
@@ -155,8 +165,12 @@ class Main extends React.Component {
 
         console.log(data);
 
+        if (data.messages && data.messages.length === 0) {
+            return;
+        }
+
         this.state.sessions.map((obj) => {
-            if (obj.ses_id = data.results.messages[0].ses_id && data.results.messages.length > 0) {
+            if (data.messages && obj.ses_id === data.messages[0].ses_id) {
                 var newObj = obj;
                 newObj.messages = obj.messages.concat(data.results.messages.map((obj) => {
                     return {

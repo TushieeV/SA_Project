@@ -39,7 +39,7 @@ export function sendMessageExt(e, message, type, steg, key, sender, receiver, se
             //    fetchUntilDone();
             //}
         });*/
-    socket.emit('start-message', {
+    socket.emit('message', {
         token: sender,
         ses_id: ses_id,
         receiver: receiver,

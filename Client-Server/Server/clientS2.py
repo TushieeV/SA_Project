@@ -27,7 +27,7 @@ Ideas:
 app = Flask(__name__)
 cors = CORS(app)
 executor = Executor(app)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+socketio = SocketIO(app, cors_allowed_origins="*")
 log = logging.getLogger('werkzeug')
 log.disabled = True
 
@@ -86,7 +86,6 @@ def get_token(body):
             INSERT INTO User_Tokens VALUES(?,?)
         '''
         execute_query(sql, (token, username), None)
-        socketio.sleep(1)
         emit('res-get-token', {'token': token})
         return
     else:
@@ -99,7 +98,6 @@ def get_token(body):
                 WHERE username = ?
             '''
             execute_query(sql, (new_token, username), None)
-            socketio.sleep(1)
             emit('res-get-token', {'token': new_token})
             return
         elif token == '':
@@ -179,7 +177,7 @@ def store_my_pkey(body):
         WHERE token = ?
     '''
     res = execute_query(sql, (token,), 'one')
-    if res is not None and token is not None:
+    if res is not None:
         #pkey = request.args.get('pkey')
         pkey = body['pkey']
         sql = '''
@@ -339,6 +337,7 @@ def check_req(body):
         emit('res-check-request', {"Message": "Invalid Request ID."})
         return
 
+@socketio.on('message')
 def msg_endpoint(body):
     #req = request.json
     
@@ -357,7 +356,9 @@ def msg_endpoint(body):
     '''
     res = execute_query(sql, (sender,), 'one')
     if res is None:
-        return jsonify({"Message": "Invalid token"})
+        #return jsonify({"Message": "Invalid token"})
+        emit('res-message', {"Message": "Invalid token"})
+        return
     sql = '''
         SELECT token
         FROM User_Tokens
@@ -393,17 +394,24 @@ def msg_endpoint(body):
                         INSERT INTO Messages VALUES(?,?,?,?,?,?,?)
                     '''
                     execute_query(sql, (ses_id, sender, receiver, msg.encode(), time, msg_type, steg), None)
-                    print("Messaged")
-                    return {"Success": True}
+                    #return {"Success": True}
+                    #emit('res-message', {'Success': True})
+                    emit('check-messages', {"ses_id": ses_id})
+                    emit('check-messages', {"ses_id": ses_id}, room=user_sids[body['receiver']])
                 else:
-                    return {"Message": "Duplicate message."}
+                    #return {"Message": "Duplicate message."}
+                    emit('res-message', {"Message": "Duplicate message."})
             else:
-                return {"Message": "Permission denied."}
+                #return {"Message": "Permission denied."}
+                emit('res-message', {"Message": "Permission denied."})
         else:
-            return {"Message": "Invalid Session ID."}
+            #return {"Message": "Invalid Session ID."}
+            emit('res-message', {"Message": "Invalid Session ID."})
     else:
-        return {"Message": "User doesn't exist."}
+        #return {"Message": "User doesn't exist."}
+        emit('res-message', {"Message": "User doesn't exist."})
 
+"""
 #@app.route("/start-message", methods=["POST"])
 @socketio.on('start-message')
 def rec_msg(body):
@@ -415,14 +423,15 @@ def rec_msg(body):
 @socketio.on('check-start-message')
 def chk_msg(body):
     if not executor.futures.done(body['task_id']):
-        socketio.sleep(1)
         emit('res-check-start-message', {"done": False, "task_id": body['task_id'], "receiver": body['receiver'], "ses_id": body['ses_id']})
         return
     emit('res-check-start-message', {"done": True})
     emit('check-messages', {"ses_id": body['ses_id']})
     emit('check-messages', {"ses_id": body['ses_id']}, room=user_sids[body['receiver']])
+"""
 
 #@app.route("/get-messages", methods=["GET"])
+@socketio.on('get-messages')
 def get_msgs(body):
     #ses_id = request.args.get('ses_id')
     ses_id = body['ses_id']
@@ -445,10 +454,13 @@ def get_msgs(body):
             sender = execute_query(sql, (sender,), 'one')[0]
             receiver = execute_query(sql, (receiver,), 'one')[0]
             msgs.append({'ses_id': ses_id, 'msg': msg.decode(), 'time': time, 'sender': sender, 'receiver': receiver, 'type': msg_type, 'steg': steg})
-        return {'messages': msgs[last_msg:]}
+        #return {'messages': msgs[last_msg:]}
+        emit('res-get-messages', {'messages': msgs[last_msg:]})
     else:
-        return {"Message": "No messages yet."}
+        #return {"Message": "No messages yet."}
+        emit('res-get-messages', {'Message': 'No messages yet'})
 
+"""
 @socketio.on('get-messages')
 def get_messages(body):
     rid = str(uuid.uuid4())
@@ -458,11 +470,11 @@ def get_messages(body):
 @socketio.on('check-messages')
 def check_messages(body):
     if not executor.futures.done(body['task_id']):
-        socketio.sleep(1)
         emit('res-check-messages', {'done': False, 'task_id': body['task_id']})
         return
     future = executor.futures.pop(body['task_id'])
     emit('res-check-messages', {"done": True, "results": future.result()})
+"""
 
 def setup():
     try:
