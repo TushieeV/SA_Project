@@ -60,7 +60,7 @@ def imgEtxt():
     enc_txt = img_encode_txt(img, msg, seed)
     return jsonify({"encoded": enc_txt})
 
-@app.route("audio-E-txt", methods=["POST"])
+@app.route("/audio-E-txt", methods=["POST"])
 def audioEtxt():
     req = request.json
     audio = req['msgToEncode']
