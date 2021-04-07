@@ -104,7 +104,7 @@ class StegDialog extends React.Component {
             .then(response => response.json())
             .then(data => {
                 this.setState({encoded: data.encoded, loading: false});
-                console.log(data.encoded.length);
+                console.log(data.encoded);
             });
     }
     handleSendClick() {
@@ -191,7 +191,6 @@ class StegDialog extends React.Component {
                                     <MenuItem value="txtEimg">Encode text within image</MenuItem>
                                     <MenuItem value="txtEaudio">Encode text within audio</MenuItem>
                                     <MenuItem value="imgEtxt">Encode image within text</MenuItem>
-                                    <MenuItem value="imgEaudio">Encode image within audio</MenuItem>
                                     <MenuItem value="audioEtxt">Encode audio within text</MenuItem>
                                     <MenuItem value="audioEimg">Encode audio within image</MenuItem>
                                 </Select>

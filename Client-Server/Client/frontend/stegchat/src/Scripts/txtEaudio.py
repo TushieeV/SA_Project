@@ -43,6 +43,7 @@ def txt_encode_audio(msg, audio, seed):
     f.close()
 
     s, a = read('temp.wav')
+    a = np.array([x for x in a])
 
     msgNum = np.array([ord(c) for c in msg])
 

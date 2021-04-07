@@ -9,6 +9,7 @@ from imgETxt import img_encode_txt, txt_decode_img
 from imgDAudio import img_decode_audio
 from txtEaudio import txt_encode_audio
 from audioDtxt import audio_decode_txt
+from imgEaudio import img_encode_audio
 import logging
 
 app = Flask(__name__)
@@ -59,6 +60,15 @@ def imgEtxt():
     seed = req['seed']
     enc_txt = img_encode_txt(img, msg, seed)
     return jsonify({"encoded": enc_txt})
+
+@app.route("/img-E-audio", methods=["POST"])
+def imgEaudio():
+    req = request.json
+    img = req['msgToEncode']
+    audio = req['msgEncodedIn']
+    seed = req['seed']
+    enc_audio = img_encode_audio(img, audio, seed)
+    return jsonify({"encoded": enc_audio})
 
 @app.route("/audio-E-txt", methods=["POST"])
 def audioEtxt():
