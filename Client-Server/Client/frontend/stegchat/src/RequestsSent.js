@@ -57,14 +57,13 @@ class RequestsSent extends React.Component {
         this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
         this.handleRequestRes = this.handleRequestRes.bind(this);
         this.updateReqs = this.updateReqs.bind(this);
-        this.updateReq = this.updateReq.bind(this);
     }
     componentDidMount() {
         this.props.socket.on('request-res', (data) => {
             this.handleRequestRes(data);
         });
         this.props.socket.on('request-accepted', (data) => {
-            this.updateReqs(data.req_id);
+            this.updateReqs(data);
         });
     }
     handleRequestRes(data) {
@@ -89,11 +88,11 @@ class RequestsSent extends React.Component {
     componentWillUnmount() {
         //clearInterval(this.checkReqs);
     }
-    updateReqs(req_id) {
+    updateReqs(data) {
         this.state.sentReqs.map((obj) => {
             //fetch(`http://${server_addr}/check-request?req_id=${obj.req_id}&token=${this.props.token}`)
-            if (obj.req_id == req_id) {
-                fetch(`${server_addr}/check-request?req_id=${obj.req_id}`, {
+            if (data.ses_id && obj.req_id == data.req_id) {
+                /*fetch(`${server_addr}/check-request?req_id=${obj.req_id}`, {
                     headers: {
                         'token': this.props.token
                     }
@@ -106,7 +105,11 @@ class RequestsSent extends React.Component {
                             this.setState({sentReqs: newSentReqs});
                             this.props.addSession(obj.username, data.ses_id);
                         }
-                    });
+                    });*/
+                var newSentReqs = [...this.state.sentReqs];
+                newSentReqs.splice(this.state.sentReqs.indexOf(obj));
+                this.setState({sentReqs: newSentReqs});
+                this.props.addSession(obj.username, data.ses_id);
             }
         });
     }

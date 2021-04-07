@@ -265,23 +265,15 @@ def check_req():
     else:
         return jsonify({"Message": "Invalid Request ID."})
     
-@app.route("/message", methods=["POST"])
-def rec_msg():
-    
+def msg_endpoint(request):
     req = request.json
     
     msg = req['msg']
-
     sender = request.headers.get('token')
-    
     receiver = req['receiver']
-    
     time = datetime.now().strftime('%d/%m/%Y %I:%M:%S %p')
-    
     ses_id = request.headers.get('ses_id')
-    
     msg_type = req['type']
-
     steg = req['steg']
     
     sql = '''
@@ -337,6 +329,18 @@ def rec_msg():
             return jsonify({"Message": "Invalid Session ID."})
     else:
         return jsonify({"Message": "User doesn't exist."})
+
+@app.route("/start-message", methods=["POST"])
+def rec_msg():
+    d = datetime.now().strftime('%d/%m/%Y %I:%M:%S %p')
+    executor.submit_stored(d, msg_endpoint, request)
+    return jsonify({"Success": True, "date": d})
+    
+@app.route("/message", methods=["GET"])
+def chk_msg():
+    if not executor.futures.done(request.args.get('date')):
+        return jsonify({"done": False})
+    return jsonify({"done": True})
 
 @app.route("/get-messages", methods=["GET"])
 def get_msgs():

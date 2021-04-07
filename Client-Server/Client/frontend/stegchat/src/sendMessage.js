@@ -1,5 +1,6 @@
 import { encrypt, decrypt } from "./encrypt_decrypt";
 import { server_addr } from './server_addr';
+import { socket } from './socket'
 
 export function sendMessageExt(e, message, type, steg, key, sender, receiver, ses_id) {
     if (e) {
@@ -9,7 +10,7 @@ export function sendMessageExt(e, message, type, steg, key, sender, receiver, se
     const enc_msg = encrypt(message, key);
     //fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&sender=${sender}&receiver=${receiver}&ses_id=${ses_id}&type=${type}&steg=${steg}`, {method: "POST"})
     //fetch(`http://${server_addr}/message?msg=${encodeURIComponent(enc_msg)}&receiver=${receiver}&type=${type}&steg=${steg}`, {
-    fetch(`${server_addr}/start-message`, {
+    /*fetch(`${server_addr}/start-message`, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -28,14 +29,22 @@ export function sendMessageExt(e, message, type, steg, key, sender, receiver, se
             if (data.message) {
                 console.log(data)
             }
-            /*if (data.date) {
-                async function fetchUntilDone() {
-                    let response = await fetch(`${server_addr}/message?date=${encodeURIComponent(data.date)}`);
-                    if (!response.done) {
-                        await fetchUntilDone();
-                    }
-                }
-                fetchUntilDone();
-            }*/
-        });
+            //if (data.date) {
+            //    async function fetchUntilDone() {
+            //        let response = await fetch(`${server_addr}/message?date=${encodeURIComponent(data.date)}`);
+            //        if (!response.done) {
+            //            await fetchUntilDone();
+            //        }
+            //    }
+            //    fetchUntilDone();
+            //}
+        });*/
+    socket.emit('start-message', {
+        token: sender,
+        ses_id: ses_id,
+        receiver: receiver,
+        msg: enc_msg,
+        type: type,
+        steg: steg
+    });
 }

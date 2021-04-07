@@ -55,14 +55,21 @@ class RequestsReceived extends React.Component {
         this.acceptReq = this.acceptReq.bind(this);
         this.rejectReq = this.rejectReq.bind(this);
         this.handleAcceptReq = this.handleAcceptReq.bind(this);
+        this.updateReqs = this.updateReqs.bind(this);
     }
     componentDidMount() {
-        this.props.socket.on('check-requests', this.updateReqs)
+        this.props.socket.on('check-requests', () => {
+            this.props.socket.emit('my-requests');
+        })
         this.props.socket.on('res-accept-request', (data) => {
+            console.log(data)
             if (data.Success) {
                 this.handleAcceptReq(data.obj, data.ses_id); 
             }
-        }); 
+        });
+        this.props.socket.on('res-my-requests', (data) => {
+            this.updateReqs(data);
+        }) 
     }
     componentWillMount() {
         //this.checkReqs = setInterval(
@@ -73,9 +80,9 @@ class RequestsReceived extends React.Component {
     componentWillUnmount() {
         //clearInterval(this.checkReqs);
     }
-    updateReqs() {
+    updateReqs(data) {
         //fetch(`http://${server_addr}/my-requests?token=${this.props.token}`)
-        fetch(`${server_addr}/my-requests`, {
+        /*fetch(`${server_addr}/my-requests`, {
             headers: {
                 'token': this.props.token
             }
@@ -96,7 +103,21 @@ class RequestsReceived extends React.Component {
                         }    
                     });
                 }
+            });*/
+        if (data.requests) {
+            data.requests.map((obj) => {
+                const found = this.state.myReqs.some(el => el.req_id === obj.req_id);
+                if (!found && obj.requestor) {
+                    var newMyReqs = [...this.state.myReqs];
+                    newMyReqs.push({
+                        username: obj.requestor,
+                        req_id: obj.req_id
+                    });
+                    console.log(data);
+                    this.setState({myReqs: newMyReqs});
+                }    
             });
+        }
     }
     acceptReq(obj) {
         //fetch(`http://${server_addr}/accept-request?req_id=${obj.req_id}&token=${this.props.token}`, {method: "POST"})

@@ -55,6 +55,13 @@ class LoginForm extends React.Component {
         this.logPress = this.logPress.bind(this);
         this.updateCreds = this.updateCreds.bind(this);
     }
+    componentDidMount() {
+        this.props.socket.on('res-get-token', (data) => {
+            if (data.token) {
+                this.props.setTok(data.token);
+            }
+        });
+    }
     updateCreds(user) {
         keytar.setPassword('stegchat', user.username, user.password);
         keytar.findCredentials('stegchat')
@@ -122,7 +129,7 @@ class LoginForm extends React.Component {
                 keytar.getPassword('stegchat-tokens', user.username)
                     .then(result => {
                         //fetch(`http://${server_addr}/get-token?username=${user.username}&token=${result}`)
-                        fetch(`${server_addr}/get-token?username=${user.username}`, {
+                        /*fetch(`${server_addr}/get-token?username=${user.username}`, {
                            headers: {
                                'token': result
                            } 
@@ -132,6 +139,10 @@ class LoginForm extends React.Component {
                             this.updateTokens(this.state.username, data.token);
                             this.props.setTok(data.token);
                             console.log(data);
+                        });*/
+                        this.props.socket.emit('get-token', {
+                            username: user.username,
+                            token: result
                         });
                     });
                 fetch(`http://127.0.0.1:6001/get-dh`)

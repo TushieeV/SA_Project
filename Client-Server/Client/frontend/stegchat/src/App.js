@@ -6,6 +6,7 @@ import {Helmet} from 'react-helmet';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import AppBar from './AppBar'
 import { server_addr } from './server_addr';
+import { socket } from './socket'
 
 const keytar = require('electron').remote.require('keytar');
 const fs = require('fs');
@@ -30,7 +31,6 @@ class App extends React.Component {
     this.setDh = this.setDh.bind(this);
     this.signOut = this.signOut.bind(this);
     this.deactivate = this.deactivate.bind(this);
-    this.socket = null;
 
     // Uncomment below to clear all account and token data
     /*keytar.findCredentials('stegchat').then(res => {
@@ -71,7 +71,7 @@ class App extends React.Component {
   componentDidUpdate() {
     if (!this.state.pkeyPosted && this.state.dh) {
       //fetch(`http://${server_addr}/my-pkey?token=${this.state.token}&pkey=${this.state.dh.public_key}`, {method: 'post'})
-      fetch(`${server_addr}/my-pkey`, {
+      /*fetch(`${server_addr}/my-pkey`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -87,6 +87,10 @@ class App extends React.Component {
         if (data.Success) {
           this.setState({pkeyPosted: true});
         }
+      });*/
+      socket.emit('my-pkey', {
+        token: this.state.token,
+        pkey: this.state.dh.public_key
       });
     }
   }
@@ -102,6 +106,7 @@ class App extends React.Component {
               setTok={this.setToken} 
               setUsername={this.setUsername}
               setDh={this.setDh}
+              socket={socket}
             />
           </ThemeProvider>
         </div>
@@ -120,6 +125,7 @@ class App extends React.Component {
             <Main 
               username={this.state.username}
               token={this.state.token}
+              socket={socket}
             />
           </ThemeProvider>
         </div>
