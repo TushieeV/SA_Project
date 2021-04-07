@@ -287,6 +287,7 @@ def request_chat(body):
     #return jsonify({"Message": "Invalid token."})
     emit('request-res', {"Message": "Invalid token."})
 
+"""
 @app.route("/accept-request", methods=["POST"])
 def accept_request():
     req_id = request.args.get('req_id')
@@ -347,6 +348,71 @@ def check_req():
             return jsonify({"Message": "Permission denied."})
     else:
         return jsonify({"Message": "Invalid Request ID."})
+"""
+
+@socketio.on('/accept-request')
+def accept_request(body):
+    req_id = body['obj']['req_id']
+    #token = request.args.get('token')
+    token = body['token']
+    sql = '''
+        SELECT *
+        FROM Requests
+        WHERE req_id = ?
+    '''
+    res = execute_query(sql, (req_id,), 'one')
+    if res is not None:
+        req_id, requestor, requesting, granted = res
+        if requesting == token and granted == 0:
+            sql = '''
+                UPDATE Requests
+                SET granted = 1
+                WHERE req_id = ?
+            '''
+            execute_query(sql, (req_id,), None)
+            sql = '''
+                INSERT INTO Sessions VALUES(?,?)
+            '''
+            ses_id = str(uuid.uuid4())
+            execute_query(sql, (ses_id, requestor + ',' + requesting), None)
+            #return jsonify({"Success": True, "ses_id": ses_id})
+            emit('res-accept-request', {"Success": True, "ses_id": ses_id, "obj": body['obj']})
+            emit('request-accepted', {"req_id": req_id}, room=tok_sids[requestor])
+        elif granted == 1:
+            return jsonify({"Message": "Request already accepted."})
+        else:
+            return jsonify({"Message": "Permission denied."})
+    else:
+        return jsonify({"Message": "Invalid Request ID."})
+
+@app.route("/check-request", methods=["GET"])
+def check_req():
+    req_id = request.args.get('req_id')
+    #token = request.args.get('token')
+    token = request.headers.get('token')
+    sql = '''
+        SELECT *
+        FROM Requests
+        WHERE req_id = ?
+    '''
+    res = execute_query(sql, (req_id,), 'one')
+    if res is not None:
+        req_id, requestor, requesting, granted = res
+        if granted == 1 and requestor == token:
+            sql = '''
+                SELECT ses_id 
+                FROM Sessions
+                WHERE participants = ?
+            '''
+            ses_id = execute_query(sql, (requestor + ',' + requesting,), 'one')[0]
+            return jsonify({"Message": "Chat Request has been accepted", "ses_id": ses_id})
+        elif granted == 0 and requestor == token:
+            return jsonify({"Message": "Chat Request not accepted yet."})
+        else:
+            return jsonify({"Message": "Permission denied."})
+    else:
+        return jsonify({"Message": "Invalid Request ID."})
+
 
 def msg_endpoint(request):
     req = request.json

@@ -55,22 +55,30 @@ class RequestsSent extends React.Component {
         this.handleReqDialogClick = this.handleReqDialogClick.bind(this);
         this.handleDialogClose = this.handleDialogClose.bind(this);
         this.handleDialogSubmit = this.handleDialogSubmit.bind(this);
+        this.handleRequestRes = this.handleRequestRes.bind(this);
+        this.updateReqs = this.updateReqs.bind(this);
+        this.updateReq = this.updateReq.bind(this);
     }
     componentDidMount() {
         this.props.socket.on('request-res', (data) => {
-            console.log(data)
-            if (data.Success) {
-                this.setState({msg: `Successfully sent chat request to ${data.user}`, msgColor: "green", loading: false});
-                var newReqs = [...this.state.sentReqs];
-                newReqs.push({
-                    username: data.user,
-                    req_id: data.req_id
-                });
-                this.setState({sentReqs: newReqs});
-            } else {
-                this.setState({msg: data.Message, msgColor: "red", loading: false});
-            }
-        })
+            this.handleRequestRes(data);
+        });
+        this.props.socket.on('request-accepted', (data) => {
+            this.updateReqs(data.req_id);
+        });
+    }
+    handleRequestRes(data) {
+        if (data.Success) {
+            this.setState({msg: `Successfully sent chat request to ${data.user}`, msgColor: "green", loading: false});
+            var newReqs = [...this.state.sentReqs];
+            newReqs.push({
+                username: data.user,
+                req_id: data.req_id
+            });
+            this.setState({sentReqs: newReqs});
+        } else {
+            this.setState({msg: data.Message, msgColor: "red", loading: false});
+        }
     }
     componentWillMount() {
         //this.checkReqs = setInterval(
@@ -81,23 +89,25 @@ class RequestsSent extends React.Component {
     componentWillUnmount() {
         //clearInterval(this.checkReqs);
     }
-    updateReqs() {
+    updateReqs(req_id) {
         this.state.sentReqs.map((obj) => {
             //fetch(`http://${server_addr}/check-request?req_id=${obj.req_id}&token=${this.props.token}`)
-            fetch(`${server_addr}/check-request?req_id=${obj.req_id}`, {
-                headers: {
-                    'token': this.props.token
-                }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.ses_id) {
-                        var newSentReqs = [...this.state.sentReqs];
-                        newSentReqs.splice(this.state.sentReqs.indexOf(obj));
-                        this.setState({sentReqs: newSentReqs});
-                        this.props.addSession(obj.username, data.ses_id);
+            if (obj.req_id == req_id) {
+                fetch(`${server_addr}/check-request?req_id=${obj.req_id}`, {
+                    headers: {
+                        'token': this.props.token
                     }
-                });
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.ses_id) {
+                            var newSentReqs = [...this.state.sentReqs];
+                            newSentReqs.splice(this.state.sentReqs.indexOf(obj));
+                            this.setState({sentReqs: newSentReqs});
+                            this.props.addSession(obj.username, data.ses_id);
+                        }
+                    });
+            }
         });
     }
     handleDialogClose() {

@@ -54,9 +54,15 @@ class RequestsReceived extends React.Component {
         this.updateReqs = this.updateReqs.bind(this);
         this.acceptReq = this.acceptReq.bind(this);
         this.rejectReq = this.rejectReq.bind(this);
+        this.handleAcceptReq = this.handleAcceptReq.bind(this);
     }
     componentDidMount() {
-        this.props.socket.on('check-requests', this.updateReqs) 
+        this.props.socket.on('check-requests', this.updateReqs)
+        this.props.socket.on('res-accept-request', (data) => {
+            if (data.Success) {
+                this.handleAcceptReq(data.obj, data.ses_id); 
+            }
+        }); 
     }
     componentWillMount() {
         //this.checkReqs = setInterval(
@@ -94,7 +100,7 @@ class RequestsReceived extends React.Component {
     }
     acceptReq(obj) {
         //fetch(`http://${server_addr}/accept-request?req_id=${obj.req_id}&token=${this.props.token}`, {method: "POST"})
-        fetch(`${server_addr}/accept-request?req_id=${obj.req_id}`, {
+        /*fetch(`${server_addr}/accept-request?req_id=${obj.req_id}`, {
             method: "POST",
             headers: {
                 'token': this.props.token
@@ -109,7 +115,19 @@ class RequestsReceived extends React.Component {
                     newMyReqs.splice(this.state.myReqs.indexOf(obj));
                     this.setState({myReqs: newMyReqs});
                 }
-            });
+            });*/
+        this.props.socket.emit('accept-request', {
+            token: this.props.token,
+            obj: obj
+        });
+    }
+    handleAcceptReq(obj, ses_id) {
+        if (ses_id) {
+            this.props.addSession(obj.username, ses_id);
+            var newMyReqs = [...this.state.myReqs];
+            newMyReqs.splice(this.state.myReqs.indexOf(obj));
+            this.setState({myReqs: newMyReqs});
+        }
     }
     rejectReq(obj) {
         var newMyReqs = [...this.state.myReqs];
