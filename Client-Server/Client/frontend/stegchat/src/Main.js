@@ -69,14 +69,12 @@ class Main extends React.Component {
         });*/
         this.props.socket.on('check-messages', (data) => {
             console.log(data);
-            this.props.socket.emit('get-messages', {
-                ses_id: data.ses_id
-            });
+            this.handleMsgCheck(data);
         });
         this.props.socket.on('res-get-messages', (data) => {
             console.log(data);
             this.updateMessages(data);
-        })
+        });
         /*this.props.socket.on('res-get-messages', (data) => {
             console.log(data);
             this.props.socket.emit('check-messages', {
