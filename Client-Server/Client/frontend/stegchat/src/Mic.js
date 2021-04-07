@@ -32,10 +32,11 @@ export default class Mic extends React.Component {
     reader.readAsDataURL(recordedBlob.blob);
     reader.onloadend = function () {
         var base64string = reader.result;
+        this.props.setAudio(base64string);
         //console.log(base64string);
         //console.log(base64string.length);
     }
-    recordedBlob.blob.arrayBuffer().then(res => {
+    /*recordedBlob.blob.arrayBuffer().then(res => {
       fs.writeFileSync('test.wav', Buffer(new Uint8Array(res)));
       console.log(res);
       var binary = '';
@@ -45,7 +46,7 @@ export default class Mic extends React.Component {
         binary += String.fromCharCode(bytes[i]);
       }
       console.log(window.btoa(binary));
-    });
+    });*/
     
     //recordedBlob.blob.arrayBuffer().then(res => {
     //  fs.writeFileSync('test.wav', Buffer(new Uint8Array(res)));

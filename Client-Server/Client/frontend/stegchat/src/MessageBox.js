@@ -262,7 +262,7 @@ class MessageBox extends React.Component {
                                 <Grid item xs={10}>
                                     {(this.state.type === "text") && this.state.message.replace(/[^ -~]+/g, "")}
                                     {(this.state.type === "image") && <img src={`data:image/png;base64, ${this.state.message}`} style={{maxWidth: "400px", maxHeight: "400px"}} />}
-                                    {(this.state.type === "audio") && <audio controls src={`data:audio/wav;base64, ${this.state.message}`} />}
+                                    {(this.state.type.split('/')[0] === "audio") && <audio controls src={`data:${this.state.type};base64, ${this.state.message}`} />}
                                 </Grid>
                                 <Grid item xs={10}>
                                     <TextField

@@ -87,7 +87,7 @@ class MessageBar extends React.Component {
         if (e.target.files[0]) {
             const contents = fs.readFileSync(e.target.files[0].path, {encoding: 'base64'});
             console.log(contents);
-            this.props.sendMessage(e, contents, "image", "None")
+            this.props.sendMessage(e, contents, "image", "None");
         }
     }
     triggerInput() {
@@ -98,6 +98,9 @@ class MessageBar extends React.Component {
     }
     openDialog() {
         this.setState({open: true});
+    }
+    setAudio(b64) {
+        this.props.sendMessage(null, b64, "audio/webm", "None");
     }
     render() {
         const { classes } = this.props;
@@ -181,7 +184,7 @@ class MessageBar extends React.Component {
                                             horizontal: 'center'
                                         }}
                                     >
-                                        <Mic />
+                                        <Mic setAudio={this.setAudio} />
                                     </Popover>
                                 </div>
                             )}
