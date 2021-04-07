@@ -251,7 +251,7 @@ class StegDialog extends React.Component {
                                                     src={`data:audio/wav;base64,${this.state.msgToEncode}`}
                                                 />
                                             </Grid>
-                                            {(this.state.steg2 === "text") && 
+                                            {(this.state.steg2 === "txt") && 
                                                 <Grid item xs={12}>
                                                     <Mic setAudio={(b64) => {
                                                         this.setState({msgToEncode: b64})

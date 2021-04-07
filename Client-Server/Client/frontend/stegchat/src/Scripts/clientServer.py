@@ -102,7 +102,7 @@ def txtDimg():
     img = txt_decode_img(msg, seed)
     return jsonify({"hidden": img})
 
-@app.route("/txt-D-audio")
+@app.route("/txt-D-audio", methods=["POST"])
 def txtDaudio():
     req = request.json
     msg = req['msg']

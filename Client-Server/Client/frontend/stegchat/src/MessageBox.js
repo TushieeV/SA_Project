@@ -202,7 +202,7 @@ class MessageBox extends React.Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    txt: this.state.message,
+                    msg: this.state.message,
                     seed: this.state.encpwd
                 })
             })
