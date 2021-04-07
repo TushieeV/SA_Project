@@ -27,7 +27,7 @@ Ideas:
 app = Flask(__name__)
 cors = CORS(app)
 executor = Executor(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 log = logging.getLogger('werkzeug')
 log.disabled = True
 
@@ -419,6 +419,7 @@ def chk_msg(body):
         emit('res-check-start-message', {"done": False, "task_id": body['task_id'], "receiver": body['receiver'], "ses_id": body['ses_id']})
         return
     emit('res-check-start-message', {"done": True})
+    emit('check-messages', {"ses_id": body['ses_id']})
     emit('check-messages', {"ses_id": body['ses_id']}, room=user_sids[body['receiver']])
 
 #@app.route("/get-messages", methods=["GET"])
@@ -429,7 +430,7 @@ def get_msgs(body):
     sql = '''
         SELECT *
         FROM Messages
-        WHERE Messages.session_id = ?
+        WHERE session_id = ?
     '''
     res = execute_query(sql, (ses_id,), 'all')
     if len(res) > 0:
@@ -461,7 +462,7 @@ def check_messages(body):
         emit('res-check-messages', {'done': False, 'task_id': body['task_id']})
         return
     future = executor.futures.pop(body['task_id'])
-    emit('res-check-messages', {"Done": True, "results": future.result()})
+    emit('res-check-messages', {"done": True, "results": future.result()})
 
 def setup():
     try:

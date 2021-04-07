@@ -73,7 +73,8 @@ class Main extends React.Component {
                 task_id: data.task_id
             });
         });
-        this.props.socket.on('rest-check-messages', (data) => {
+        this.props.socket.on('res-check-messages', (data) => {
+            console.log(data);
             if (!data.done) {
                 this.props.socket.emit('check-messages', {
                     task_id: data.task_id
@@ -93,7 +94,7 @@ class Main extends React.Component {
                     });
                     return;
                 }
-            })
+            });
         }
     }
     componentWillMount() {
@@ -152,6 +153,8 @@ class Main extends React.Component {
                 });
         });*/
 
+        console.log(data);
+
         this.state.sessions.map((obj) => {
             if (obj.ses_id = data.results.messages[0].ses_id && data.results.messages.length > 0) {
                 var newObj = obj;
@@ -165,7 +168,7 @@ class Main extends React.Component {
                         steg: obj.steg
                     }
                 }));
-                this.setState({message: newObj.messages});
+                this.setState({messages: newObj.messages});
                 var newSessions = [...this.state.sessions];
                 newSessions[this.state.sessions.indexOf(obj)] = newObj;
                 this.setState({sessions: newSessions});
