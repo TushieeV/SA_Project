@@ -119,7 +119,6 @@ class PrimaryAppBar extends React.Component {
         open={Boolean(this.state.anchorEl)}
         onClose={this.handleMenuClose}
       >
-        <MenuItem onClick={this.handleMenuClose}>Profile</MenuItem>
         <MenuItem onClick={this.props.signOut}>Sign Out</MenuItem>
         <MenuItem onClick={this.props.deactivate}>Deactivate</MenuItem>
       </Menu>

@@ -17,6 +17,7 @@
     "electron-is-dev": "^2.0.0",
     "image-to-base64": "^2.1.1",
     "keytar": "^7.5.0",
+    "material-ui-popup-state": "^1.8.0",
     "python-shell": "^2.0.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

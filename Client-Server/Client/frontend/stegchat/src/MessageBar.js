@@ -5,14 +5,19 @@ import IconButton from '@material-ui/core/IconButton';
 import SendSharpIcon from '@material-ui/icons/SendSharp';
 import ImageIcon from '@material-ui/icons/Image';
 import LockIcon from '@material-ui/icons/Lock';
+import MicIcon from '@material-ui/icons/Mic';
 import StegDialog from "./StegDialog";
+import Popover from '@material-ui/core/Popover';
+import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
+import Mic from './Mic';
+import Grid from '@material-ui/core/Grid';
 
 const fs = require('fs');
 
 const useStyles = theme => ({
     textField: {
-        width: "80%",
-        color: "white"
+        width: "100%",
+        color: "white",
     },
     button: {
         top: "20px",
@@ -103,51 +108,97 @@ class MessageBar extends React.Component {
                     open={this.state.open}
                     sendMessage={this.sendM}    
                 />
-                <TextField 
-                    variant="outlined"
-                    margin="normal"
-                    id="message"
-                    label="Enter message"
-                    name="message"
-                    autoFocus
-                    multiline
-                    value={this.state.message}
-                    className={classes.textField}
-                    InputProps={{
-                        className: classes.input
+                <Grid
+                    container
+                    spacing={1}
+                    style={{
+                        paddingLeft: "10%"
                     }}
-                    disabled={this.props.session ? false : false}
-                    onChange={(e) => this.handleMsgChange(e)}
-                    onKeyPress={(e) => this.handleKeyPress(e, "text", "None")}
-                />
-                <IconButton 
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    disabled={this.props.session ? false : false}
-                    onClick={(e) => {this.sendMsg(e, "text", "None")}}
                 >
-                    <SendSharpIcon />
-                </IconButton>
-                <input type="file" accept="image/*" id="messagebar" ref={this.fileInput} style={{display: "none"}} onChange={this.handleFileChange}/>
-                <IconButton
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    disabled={this.props.session ? false : false}
-                    onClick={this.triggerInput}
-                >
-                    <ImageIcon />
-                </IconButton>
-                <IconButton
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    disabled={this.props.session ? false : false}
-                    onClick={this.openDialog}
-                >
-                    <LockIcon />
-                </IconButton>
+                    <Grid item xs={9}>
+                        <TextField 
+                            variant="outlined"
+                            margin="normal"
+                            id="message"
+                            label="Enter message"
+                            name="message"
+                            autoFocus
+                            multiline
+                            value={this.state.message}
+                            className={classes.textField}
+                            InputProps={{
+                                className: classes.input
+                            }}
+                            disabled={this.props.session ? false : true}
+                            onChange={(e) => this.handleMsgChange(e)}
+                            onKeyPress={(e) => this.handleKeyPress(e, "text", "None")}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <IconButton 
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            disabled={this.props.session ? false : true}
+                            onClick={(e) => {this.sendMsg(e, "text", "None")}}
+                        >
+                            <SendSharpIcon />
+                        </IconButton>
+                    </Grid>
+                    <input type="file" accept="image/*" id="messagebar" ref={this.fileInput} style={{display: "none"}} onChange={this.handleFileChange}/>
+                    <Grid item>
+                        <IconButton
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            disabled={this.props.session ? false : true}
+                            onClick={this.triggerInput}
+                        >
+                            <ImageIcon />
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        <PopupState variant="popover" popupId="popup-popover">
+                            {(popupState) => (
+                                <div>
+                                    <IconButton
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.button}
+                                        disabled={this.props.session ? false : true}
+                                        {...bindTrigger(popupState)}
+                                    >
+                                        <MicIcon />
+                                    </IconButton>
+                                    <Popover
+                                        {...bindPopover(popupState)}
+                                        anchorOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center'
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'center'
+                                        }}
+                                    >
+                                        <Mic />
+                                    </Popover>
+                                </div>
+                            )}
+                        </PopupState>
+                    </Grid>
+                    <Grid item>
+                        <IconButton
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            disabled={this.props.session ? false : true}
+                            onClick={this.openDialog}
+                        >
+                            <LockIcon />
+                        </IconButton>
+                    </Grid>
+                </Grid>
             </div>
         );
     }
