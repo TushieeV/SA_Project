@@ -184,6 +184,7 @@ class Main extends React.Component {
                 var newSessions = [...this.state.sessions];
                 newSessions[this.state.sessions.indexOf(obj)] = newObj;
                 this.setState({sessions: newSessions});
+                return;
             }
         });
         
