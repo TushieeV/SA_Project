@@ -58,6 +58,10 @@ class RequestsReceived extends React.Component {
         this.updateReqs = this.updateReqs.bind(this);
     }
     componentDidMount() {
+        this.setState({myReqs: []})
+        this.props.socket.emit('my-requests', {
+            token: this.props.token
+        });
         this.props.socket.on('check-requests', () => {
             this.props.socket.emit('my-requests', {
                 token: this.props.token
@@ -71,7 +75,7 @@ class RequestsReceived extends React.Component {
         });
         this.props.socket.on('res-my-requests', (data) => {
             this.updateReqs(data);
-        }) 
+        });
     }
     componentWillMount() {
         //this.checkReqs = setInterval(
@@ -107,6 +111,7 @@ class RequestsReceived extends React.Component {
                 }
             });*/
         if (data.requests) {
+            console.log(data.requests)
             data.requests.map((obj) => {
                 const found = this.state.myReqs.some(el => el.req_id === obj.req_id);
                 if (!found && obj.requestor) {

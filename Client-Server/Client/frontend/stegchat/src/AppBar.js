@@ -15,6 +15,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button'
 
 const useStyles = theme => ({
   grow: {
@@ -85,7 +86,7 @@ class PrimaryAppBar extends React.Component {
     super(props);
     this.state = {
       anchorEl: null,
-      mobileMoreAnchorEl: null,
+      mobileMoreAnchorEl: null
     };
     this.handleProfileMenuOpen = this.handleProfileMenuOpen.bind(this);
     this.handleMobileMenuClose = this.handleMobileMenuClose.bind(this);

@@ -7,9 +7,10 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import AppBar from './AppBar'
 import { server_addr } from './server_addr';
 import { socket } from './socket'
-
+import * as url from './stegchatlogo.PNG';
+import Grid from '@material-ui/core/Grid';
+ 
 const keytar = require('electron').remote.require('keytar');
-const fs = require('fs');
 
 class App extends React.Component {
   constructor(props) {
@@ -69,11 +70,18 @@ class App extends React.Component {
       token: null,
       pkeyPosted: false,
       dh: null
+    }, () => {
+      socket.disconnect();
+      socket.connect();
     });
   }
   deactivate() {
     keytar.deletePassword('stegchat', this.state.username);
     keytar.deletePassword('stegchat-tokens', this.state.username);
+    socket.emit('deactivate', {
+      token: this.state.token,
+      username: this.state.username
+    });
     this.signOut();
   }
   componentDidUpdate() {
@@ -110,12 +118,26 @@ class App extends React.Component {
             <Helmet>
               <style>{'body {background-color: #282828; }'}</style>
             </Helmet>
-            <Login 
-              setTok={this.setToken} 
-              setUsername={this.setUsername}
-              setDh={this.setDh}
-              socket={socket}
-            />
+            <Grid
+              container
+              spacing={1}
+              direction="column"
+              alignItems="center"
+              justify="center"
+              style={{marginTop: "25vh"}}
+            >
+              <Grid item xs={12}>
+                <img src={url.default} />
+              </Grid>
+              <Grid item xs={12}>
+                <Login 
+                  setTok={this.setToken} 
+                  setUsername={this.setUsername}
+                  setDh={this.setDh}
+                  socket={socket}
+                />
+              </Grid>
+            </Grid>
           </ThemeProvider>
         </div>
       );

@@ -59,11 +59,26 @@ class RequestsSent extends React.Component {
         this.updateReqs = this.updateReqs.bind(this);
     }
     componentDidMount() {
+        this.props.socket.emit('my-sent-requests', {
+            token: this.props.token
+        })
         this.props.socket.on('request-res', (data) => {
             this.handleRequestRes(data);
         });
         this.props.socket.on('request-accepted', (data) => {
             this.updateReqs(data);
+        });
+        this.props.socket.on('res-my-sent-requests', (data) => {
+            if (data.requests) {
+                var newReqs = [...this.state.sentReqs];
+                data.requests.forEach((obj) => {
+                    newReqs.push({
+                        username: obj.username,
+                        req_id: obj.req_id
+                    });
+                });
+                this.setState({sentReqs: newReqs});
+            }
         });
     }
     handleRequestRes(data) {

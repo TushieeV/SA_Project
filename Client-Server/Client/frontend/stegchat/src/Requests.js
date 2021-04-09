@@ -34,7 +34,7 @@ class Requests extends React.Component {
                 />
                 <Chats 
                     sessions={this.props.sessions}
-                    setCurr={this.props.setCurr}    
+                    setCurr={this.props.setCurr}
                 />
             </Container>
         );

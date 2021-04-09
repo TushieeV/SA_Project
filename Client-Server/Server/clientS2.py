@@ -12,10 +12,10 @@ from flask_socketio import send, emit
 
 tok_sids = {}
 user_sids = {}
+sid_toks = {}
+sid_users = {}
 
 '''
-TODO:
-    - Make the storage of tokens encrypted somehow
 Ideas:
     - Users can choose whether to save chat session chat logs
         - Chat logs are only saved if both users agree
@@ -34,11 +34,85 @@ log.disabled = True
 @socketio.on('connect')
 def handle_conn():
     print('Connected')
-    #emit('authenticate')
+
+@socketio.on('deactivate')
+def deactivate(body):
+    user = body['username']
+    token = body['token']
+    sql = '''
+        SELECT *
+        FROM User_Tokens
+        WHERE (username = ? AND token = ?)
+    '''
+    res = execute_query(sql, (user, token), 'one')
+    if res is not None:
+        sql = '''
+            DELETE FROM User_Tokens WHERE (username = ? AND token = ?)
+        '''
+        execute_query(sql, (user, token), None)
+        emit('res-deactivate', {'Success': True})
+    else:
+        emit('res-deactivate', {'Success': False})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    global user_sids, tok_sids, sid_toks, sid_users
+    if request.sid in sid_toks:
+        user = sid_users[request.sid]
+        tok = sid_toks[request.sid]
+        del sid_users[request.sid]
+        del sid_toks[request.sid]
+        del tok_sids[tok]
+        del user_sids[user]
+
+        sql = '''
+            DELETE FROM Public_Keys WHERE token = ?
+        '''
+        execute_query(sql, (tok,), None)
+
+        #sql = '''
+        #    DELETE FROM Requests WHERE (requestor = ? OR requesting = ?)
+        #'''
+        #execute_query(sql, (tok, tok), None)
+
+        sql = f'''
+            SELECT ses_id
+            FROM Sessions
+            WHERE (participants LIKE '%,{tok}' OR participants LIKE '{tok},%')
+        '''
+        res = execute_query(sql, None, 'all')
+        for x in res:
+            sid = x[0]
+            sql = '''
+                DELETE FROM Messages WHERE session_id = ?
+            '''
+            execute_query(sql, (sid,), None)
+            sql = '''
+                DELETE FROM Sessions WHERE ses_id = ?
+            '''
+            execute_query(sql, (sid,), None)
+
+        print(f"{user} disconnected")
+    
+    print(f"Disconnected")
+
+@socketio.on('check-username')
+def check_username(body):
+    username = body['username']
+    sql = '''
+        SELECT username
+        FROM User_Tokens
+        WHERE username = ?
+    '''
+    res = execute_query(sql, (username,), 'one')
+    if res is not None:
+        emit('res-check-username', {'result': True})
+    else:
+        emit('res-check-username', {'result': False})
 
 @socketio.on('authenticate')
 def handle_auth(body):
-    global user_sids, tok_sids
+    global user_sids, tok_sids, sid_toks, sid_users
     token = body['token']
     username = body['username']
     sql = '''
@@ -50,6 +124,8 @@ def handle_auth(body):
     if res is not None:
         user_sids[username] = request.sid
         tok_sids[token] = request.sid
+        sid_toks[request.sid] = token
+        sid_users[request.sid] = username
         emit('connected', True)
     else:
         emit('connected', False)
@@ -67,11 +143,10 @@ Conditions:
       while updating the value for token to the new one in User_Tokens
     - If the token parameter is non-empty but not the same as in User_Tokens, then server returns 'Permission denied'
 """
-#@app.route("/get-token", methods=["GET"])
 @socketio.on('get-token')
 def get_token(body):
+    print(body)
     username = body['username']
-    #tok = request.args.get('token')
     tok = None
     if 'token' in body: tok = body['token']
     sql = '''
@@ -86,6 +161,7 @@ def get_token(body):
             INSERT INTO User_Tokens VALUES(?,?)
         '''
         execute_query(sql, (token, username), None)
+        print(f"Username: {username}, Generated Token: {token}")
         emit('res-get-token', {'token': token})
         return
     else:
@@ -98,6 +174,22 @@ def get_token(body):
                 WHERE username = ?
             '''
             execute_query(sql, (new_token, username), None)
+
+            sql = '''
+                UPDATE Requests
+                SET requestor = ?
+                WHERE requestor = ?
+            '''
+            execute_query(sql, (new_token, token), None)
+
+            sql = '''
+                UPDATE Requests
+                SET requesting = ?
+                WHERE requesting = ?
+            '''
+            execute_query(sql, (new_token, token), None)
+
+            print(f"Username: {username}, New Token: {new_token}")
             emit('res-get-token', {'token': new_token})
             return
         elif token == '':
@@ -118,7 +210,6 @@ Conditions:
     - If target doesn't exist in User_Tokens then returns 'User doesn't exist'
     - If ses_id is valid and target is a participant of the Session then returns the public key of the target
 """
-#@app.route("/get-pkey", methods=["GET"])
 @socketio.on('get-pkey')
 def get_pkey(body):
     ses_id = body['ses_id']
@@ -158,10 +249,8 @@ def get_pkey(body):
         emit('res-get-pkey', {"Message:" "User doesn't exist."})
         return
 
-#@app.route("/my-pkey", methods=["POST"])
 @socketio.on('my-pkey')
 def store_my_pkey(body):
-    #token = request.args.get('token')
     token = body['token']
     sql = '''
         SELECT token
@@ -178,7 +267,6 @@ def store_my_pkey(body):
     '''
     res = execute_query(sql, (token,), 'one')
     if res is not None:
-        #pkey = request.args.get('pkey')
         pkey = body['pkey']
         sql = '''
             INSERT INTO Public_Keys VALUES(?,?)
@@ -190,10 +278,8 @@ def store_my_pkey(body):
         emit('res-my-pkey', {"Message": "Invalid token."})
         return
 
-#@app.route("/my-requests", methods=["GET"])
 @socketio.on('my-requests')
 def get_chat_requests(body):
-    #token = request.args.get('token')
     token = body['token']
     sql = '''
         SELECT Requests.req_id, User_Tokens.username, Requests.granted
@@ -217,7 +303,6 @@ def get_chat_requests(body):
 @socketio.on('request')
 def request_chat(body):
     global user_sids, tok_sids
-    #requestor = request.args.get('requestor')
     requestor = body['token']
     requesting = body['requesting']
     sql = '''
@@ -247,29 +332,24 @@ def request_chat(body):
                 '''
                 req_id = str(uuid.uuid4())
                 execute_query(sql, (req_id, requestor, requesting, 0), None)
-                #return jsonify({"Success": True, "req_id": req_id})
                 emit('request-res', {"Success": True, "req_id": req_id, "user": body['requesting']})
-                emit('check-requests', room=tok_sids[requesting])
+                if requesting in tok_sids:
+                    emit('check-requests', room=tok_sids[requesting])
                 return
             else:
-                #return jsonify({"Message": "You have already requested to chat with this person."})
                 emit('request-res', {"Message": "You have already requested to chat with this person."})
                 return
         else:
-            #return jsonify({"Message": "This person has already requested to chat with you."})
             emit('request-res', {"Message": "This person has already requested to chat with you."})
             return
     else:
-        #return jsonify({"Message": "User doesn't exist."})
         emit('request-res', {"Message": "User doesn't exist."})
         return
-    #return jsonify({"Message": "Invalid token."})
     emit('request-res', {"Message": "Invalid token."})
 
 @socketio.on('accept-request')
 def accept_request(body):
     req_id = body['obj']['req_id']
-    #token = request.args.get('token')
     token = body['token']
     sql = '''
         SELECT *
@@ -291,9 +371,9 @@ def accept_request(body):
             '''
             ses_id = str(uuid.uuid4())
             execute_query(sql, (ses_id, requestor + ',' + requesting), None)
-            #return jsonify({"Success": True, "ses_id": ses_id})
             emit('res-accept-request', {"Success": True, "ses_id": ses_id, "obj": body['obj']})
-            emit('request-accepted', {"req_id": req_id, "ses_id": ses_id}, room=tok_sids[requestor])
+            if requestor in tok_sids:
+                emit('request-accepted', {"req_id": req_id, "ses_id": ses_id}, room=tok_sids[requestor])
             return
         elif granted == 1:
             emit('res-accept-request', {"Message": "Request already accepted."})
@@ -304,11 +384,33 @@ def accept_request(body):
     else:
         emit('res-accept-request', {"Message": "Invalid Request ID."})
 
-#@app.route("/check-request", methods=["GET"])
+@socketio.on('my-sent-requests')
+def get_sent_reqs(body):
+    token = body['token']
+    sql = '''
+        SELECT Requests.req_id, User_Tokens.username
+        FROM Requests
+        LEFT OUTER JOIN User_Tokens
+        ON (Requests.requestor = ? AND User_Tokens.token = Requests.requesting)
+    '''
+    res = execute_query(sql, (token,), 'all')
+    print(res)
+    if len(res) > 0:
+        requests = []
+        for x in res:
+            req_id, user = x
+            if user:
+                requests.append({
+                    "username": user,
+                    "req_id": req_id
+                })
+        emit('res-my-sent-requests', {'requests': requests})
+    else:
+        emit('res-my-sent-requests', {'message': 'No sent requests'})
+
 @socketio.on('check-request')
 def check_req(body):
     req_id = body['obj']['req_id']
-    #token = request.args.get('token')
     token = body['token']
     sql = '''
         SELECT *
@@ -339,7 +441,6 @@ def check_req(body):
 
 @socketio.on('message')
 def msg_endpoint(body):
-    #req = request.json
     
     msg = body['msg']
     sender = body['token']
@@ -356,7 +457,6 @@ def msg_endpoint(body):
     '''
     res = execute_query(sql, (sender,), 'one')
     if res is None:
-        #return jsonify({"Message": "Invalid token"})
         emit('res-message', {"Message": "Invalid token"})
         return
     sql = '''
@@ -394,46 +494,20 @@ def msg_endpoint(body):
                         INSERT INTO Messages VALUES(?,?,?,?,?,?,?)
                     '''
                     execute_query(sql, (ses_id, sender, receiver, msg.encode(), time, msg_type, steg), None)
-                    #return {"Success": True}
-                    #emit('res-message', {'Success': True})
                     emit('check-messages', {"ses_id": ses_id})
-                    emit('check-messages', {"ses_id": ses_id}, room=user_sids[body['receiver']])
+                    if body['receiver'] in user_sids:
+                        emit('check-messages', {"ses_id": ses_id}, room=user_sids[body['receiver']])
                 else:
-                    #return {"Message": "Duplicate message."}
                     emit('res-message', {"Message": "Duplicate message."})
             else:
-                #return {"Message": "Permission denied."}
                 emit('res-message', {"Message": "Permission denied."})
         else:
-            #return {"Message": "Invalid Session ID."}
             emit('res-message', {"Message": "Invalid Session ID."})
     else:
-        #return {"Message": "User doesn't exist."}
         emit('res-message', {"Message": "User doesn't exist."})
 
-"""
-#@app.route("/start-message", methods=["POST"])
-@socketio.on('start-message')
-def rec_msg(body):
-    rid = str(uuid.uuid4())
-    executor.submit_stored(rid, msg_endpoint, body)
-    emit('res-start-message', {"Success": True, "task_id": rid, "receiver": body['receiver'], "ses_id": body['ses_id']})
-    
-#@app.route("/message", methods=["GET"])
-@socketio.on('check-start-message')
-def chk_msg(body):
-    if not executor.futures.done(body['task_id']):
-        emit('res-check-start-message', {"done": False, "task_id": body['task_id'], "receiver": body['receiver'], "ses_id": body['ses_id']})
-        return
-    emit('res-check-start-message', {"done": True})
-    emit('check-messages', {"ses_id": body['ses_id']})
-    emit('check-messages', {"ses_id": body['ses_id']}, room=user_sids[body['receiver']])
-"""
-
-#@app.route("/get-messages", methods=["GET"])
 @socketio.on('get-messages')
 def get_msgs(body):
-    #ses_id = request.args.get('ses_id')
     ses_id = body['ses_id']
     last_msg = int(body['last_msg'])
     sql = '''
@@ -454,27 +528,9 @@ def get_msgs(body):
             sender = execute_query(sql, (sender,), 'one')[0]
             receiver = execute_query(sql, (receiver,), 'one')[0]
             msgs.append({'ses_id': ses_id, 'msg': msg.decode(), 'time': time, 'sender': sender, 'receiver': receiver, 'type': msg_type, 'steg': steg})
-        #return {'messages': msgs[last_msg:]}
         emit('res-get-messages', {'messages': msgs[last_msg:]})
     else:
-        #return {"Message": "No messages yet."}
         emit('res-get-messages', {'Message': 'No messages yet'})
-
-"""
-@socketio.on('get-messages')
-def get_messages(body):
-    rid = str(uuid.uuid4())
-    executor.submit_stored(rid, get_msgs, body)
-    emit('res-get-messages', {"task_id": rid})
-
-@socketio.on('check-messages')
-def check_messages(body):
-    if not executor.futures.done(body['task_id']):
-        emit('res-check-messages', {'done': False, 'task_id': body['task_id']})
-        return
-    future = executor.futures.pop(body['task_id'])
-    emit('res-check-messages', {"done": True, "results": future.result()})
-"""
 
 def setup():
     try:

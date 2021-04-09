@@ -55,7 +55,10 @@ def db_setup():
 def execute_query(sql, params, fetch):
     conn = sqlite3.connect('StegChatDB.db')
     c = conn.cursor()
-    c.execute(sql, params)
+    if params:
+        c.execute(sql, params)
+    else:
+        c.execute(sql)
     if fetch:
         if fetch == 'one':
             conn.commit()

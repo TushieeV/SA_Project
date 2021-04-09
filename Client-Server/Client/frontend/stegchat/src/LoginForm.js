@@ -13,7 +13,7 @@ const keytar = require('electron').remote.require('keytar');
 const useStyles = theme => ({
     paper: {
         //marginTop: theme.spacing(8),
-        marginTop: "90%",
+        //marginTop: "90%",
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -59,9 +59,27 @@ class LoginForm extends React.Component {
         this.props.socket.on('res-get-token', (data) => {
             console.log(data);
             if (data.token) {
+                this.updateTokens(this.state.username, data.token);
                 this.props.setTok(data.token);
             }
         });
+        this.props.socket.on('res-check-username', (data) => {
+            if (!data.result) {
+                var user = {
+                    username: this.state.username,
+                    password: this.state.password,
+                }
+                const found = this.state.creds.some(el => el.account === user.username);
+                if (!found) {
+                    this.updateCreds(user);
+                    this.setState({msg: "Registration successful!", msgColor: "green"});
+                } else {
+                    this.setState({msg: "Username already taken", msgColor: "red"});
+                }
+            } else {
+                this.setState({msg: "Username already taken", msgColor: "red"});
+            }
+        })
     }
     updateCreds(user) {
         keytar.setPassword('stegchat', user.username, user.password);
@@ -102,13 +120,16 @@ class LoginForm extends React.Component {
             password: this.state.password,
         }
         if (this.props.prompt === 'Sign Up') {
-            const found = this.state.creds.some(el => el.account === user.username);
-            if (!found) {
+            //const found = this.state.creds.some(el => el.account === user.username);
+            this.props.socket.emit('check-username', {
+                username: user.username
+            });
+            /*if (!found && !this.state.userExists) {
                 this.updateCreds(user);
                 this.setState({msg: "Registration successful!", msgColor: "green"});
             } else {
                 this.setState({msg: "Username already taken", msgColor: "red"});
-            }
+            }*/
         } else {
             const foundAccount = this.state.creds.some(el => (el.account === user.username && el.password === user.password));
             const foundToken = this.state.tokens.some(el => el.account === user.username);
