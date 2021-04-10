@@ -17,7 +17,7 @@ function createWindow() {
           enableRemoteModule: true
       }
     });
-    mainWindow2 = new BrowserWindow({
+    /*mainWindow2 = new BrowserWindow({
       width: 900, 
       height: 680,
       webPreferences: {
@@ -25,11 +25,11 @@ function createWindow() {
           contextIsolation: false,
           enableRemoteModule: true
       }
-    });
+    });*/
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
   mainWindow.on('closed', () => mainWindow = null);
-  mainWindow2.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
-  mainWindow2.on('closed', () => mainWindow = null);
+  //mainWindow2.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
+  //mainWindow2.on('closed', () => mainWindow = null);
 }
 
 app.on('ready', createWindow);

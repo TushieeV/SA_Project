@@ -11,6 +11,9 @@ import * as url from './stegchatlogo.PNG';
 import Grid from '@material-ui/core/Grid';
  
 const keytar = require('electron').remote.require('keytar');
+const remote = require('electron').remote
+
+let w = remote.getCurrentWindow();
 
 class App extends React.Component {
   constructor(props) {
@@ -34,7 +37,7 @@ class App extends React.Component {
     this.deactivate = this.deactivate.bind(this);
 
     // Uncomment below to clear all account and token data
-    /*keytar.findCredentials('stegchat').then(res => {
+    keytar.findCredentials('stegchat').then(res => {
       res.map(obj => {
         keytar.deletePassword('stegchat', obj.account)
       })
@@ -44,7 +47,7 @@ class App extends React.Component {
       res.map(obj => {
         keytar.deletePassword('stegchat-tokens', obj.account)
       })
-    })*/
+    })
   
   }
   componentDidMount() {
@@ -72,7 +75,8 @@ class App extends React.Component {
       dh: null
     }, () => {
       socket.disconnect();
-      socket.connect();
+      //socket.connect();
+      w.close();
     });
   }
   deactivate() {
