@@ -79,7 +79,3 @@ def img_decode_audio(image, seed):
     return base64.b64encode(open('temp.wav', 'rb').read()).decode()
 
     #write("decodedAudio.wav", 44100, audio)
-
-if __name__ == '__main__':
-    img = open('tempb64', 'r').read()
-    open('tempdecoded', 'w+').write(img_decode_audio(img, 'theway007'))

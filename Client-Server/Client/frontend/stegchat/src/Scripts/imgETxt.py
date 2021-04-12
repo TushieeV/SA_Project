@@ -1,10 +1,6 @@
-import base64
-import json
-import requests
-import time
-from base64 import b64encode
 import random
 
+# Given a number returns its size-bit binary string
 def binArr(num, size):
     b = "{0:b}".format(num)
     if len(b) != size:
@@ -13,6 +9,7 @@ def binArr(num, size):
         b = tmp
     return b
 
+# img: base64 string, txt: string, seed: string or number
 def img_encode_txt(img, txt, seed):
     random.seed(seed)
     cipher = ''
@@ -25,6 +22,7 @@ def img_encode_txt(img, txt, seed):
     txt += shuffled_cipher
     return txt
 
+# txt: string, seed: string or number
 def txt_decode_img(txt, seed):
     random.seed(seed)
     shuffled_cipher = ''.join([c for c in txt if c == '\a' or c == '\b'])

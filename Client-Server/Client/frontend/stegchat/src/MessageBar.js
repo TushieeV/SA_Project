@@ -196,7 +196,7 @@ class MessageBar extends React.Component {
                             variant="contained"
                             color="primary"
                             className={classes.button}
-                            disabled={this.props.session ? false : false}
+                            disabled={this.props.session ? false : true}
                             onClick={this.openDialog}
                         >
                             <LockIcon />

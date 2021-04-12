@@ -89,6 +89,3 @@ def audio_decode_img(audio, seed):
     img_str = base64.b64encode(buffered.getvalue()).decode()
     return img_str
 
-if __name__ == '__main__':
-    audio = open('audio', 'r').read()
-    audio_decode_img(audio, 'theway007')

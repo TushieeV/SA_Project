@@ -45,10 +45,3 @@ def img_decode_txt(image, seed):
         msg += chr(int(currC, 2))
     
     return msg
-
-if __name__ == '__main__':
-    f = open('encImg', 'r')
-    img = f.read()
-    f.close()
-    img = img.rstrip('\n')
-    print(img_decode_txt(img, 'theway007'))
