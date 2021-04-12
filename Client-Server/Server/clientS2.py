@@ -70,10 +70,10 @@ def handle_disconnect():
         '''
         execute_query(sql, (tok,), None)
 
-        #sql = '''
-        #    DELETE FROM Requests WHERE (requestor = ? OR requesting = ?)
-        #'''
-        #execute_query(sql, (tok, tok), None)
+        sql = '''
+            DELETE FROM Requests WHERE (requestor = ? OR requesting = ?)
+        '''
+        execute_query(sql, (tok, tok), None)
 
         sql = f'''
             SELECT ses_id
@@ -548,4 +548,6 @@ if __name__ == '__main__':
         db_setup()
 
     #app.run(host='0.0.0.0', port='5000')
-    socketio.run(app, host='0.0.0.0', port=5000)
+    #socketio.run(app, host='0.0.0.0', port=5000)
+    socketio.run(app)
+    #app.run()
