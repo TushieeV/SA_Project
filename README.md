@@ -1,5 +1,5 @@
 # SA_Project
-COMP64441 Something Awesome Project - StegChat: A steganography messaging application  
+StegChat: A steganography messaging application  
   
 To run, first you'll need to start the webserver:  
 1. Navigate to Client-Server/Server
