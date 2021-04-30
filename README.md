@@ -12,4 +12,6 @@ Then, you'll need to run the frontend server:
 Now finally you can run the application:  
 1. Navigate to Client-Server/Client/frontend/stegchat
 2. If you haven't already, run `npm install`  
-3. Run `npm run electron-dev`
+3. Run `npm run electron-dev`  
+  
+Here you can find a video showcasing the applicatoin thus far: https://www.youtube.com/watch?v=xYMKCgmUGNw
